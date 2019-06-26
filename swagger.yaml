@@ -1,0 +1,202 @@
+swagger: "2.0"
+info:
+  description: This is a sample Tuning Palce server..
+  version: 1.0.0
+  title: Swagger Tunning Place
+tags: 
+  - name: part
+    description: "Everything about parts"
+  - name: "project"
+    description: "Everything about projects"
+  - name: order
+    description: "Everything about your orders"
+  - name: user
+    description: "Operations about user"
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /part/create:
+    post:
+      tags:
+        - "part"
+      summary: Add a new part to the store
+      description: ''
+      operationId: addPart
+      parameters:
+        - in: body
+          name: body
+          description: Part object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/Part'
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  /part/all:
+    get:
+      tags:
+        - "part"
+      summary: Finds All Parts
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              type: string
+        '400':
+          description: Invalid value
+  /part/details/{id}:
+    get:
+      tags:
+        - "part"
+      description: "Returns a single part"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of part to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Part not found"
+  /part/delete/{id}:
+    delete:
+      tags:
+        - "part"
+      description: "Delete a single part"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of the part to delete"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Part deleted successfully!"
+        404:
+          description: "Part does not exists!" 
+    
+definitions:
+  Part:
+    type: "object"
+    required:
+      - "title"
+      - "make"
+      - "model"
+      - "year"
+      - "description"
+      - "price"
+      - "image"
+    properties:
+      title:
+        type: "string"
+        minLength: 3
+      make:
+        type: "string"
+        minLength: 3
+      model:
+        type: "string"
+        minLength: 3
+      year:
+        type: "integer"
+        minimum: 1920
+        maximum: 2019
+      description:
+        type: "string"
+        minLength: 10
+      price:
+        type: "integer"
+        minimum: 1
+      image:
+        type: "string"
+  Project:
+    type: "object"
+    required:
+      - "title"
+      - "model"
+      - "year"
+      - "description"
+      - "image"
+    properties:
+      title:
+        type: "string"
+        minLength: 3
+      model:
+        type: "string"
+        minLength: 3
+      year:
+        type: "integer"
+        minimum: 1920
+        maximum: 2019
+      description:
+        type: "string"
+        minLength: 10
+      image:
+        type: "string"
+      creator:
+        $ref: "#/definitions/User"
+      comments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Comment"
+  User:
+    type: "object"
+    required:
+      - "email"
+      - "name"
+    properties:
+      email: 
+        type: "string"
+      name:
+        type: "string"
+      parts:
+        type: "array"
+        items:
+          $ref: "#/definitions/Part"
+      roles:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+        default: "User"
+      avatar:
+        type: "string"
+        default: "https://cdn5.vectorstock.com/i/1000x1000/51/99/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199.jpg"
+  Comment:
+    type: "object"
+    required:
+      - "content"
+      - "projectId"
+      - "creatorName"
+      - "creatorId"
+    properties:
+      content:
+        type: "string"
+      projectId:
+        $ref: "#/definitions/Project"
+      creatorName:
+        $ref: "#/definitions/User"
+      creatorId: 
+        $ref: "#/definitions/User"
+      createdOn:
+        type: "string"
+        format: "date"
+  Order:
+    type: "object"
+    required:
+      - "buyer"
+      - "part"
+    properties:
+      buyer:
+        $ref: "#/definitions/User"
+      part:
+        $ref: "#/definitions/Part"
+    
