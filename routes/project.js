@@ -70,7 +70,7 @@ router.post('/create', authCheck, (req, res) => {
     })
 })
 
-router.get('/all', authCheck ,(req, res) => {
+router.get('/all', (req, res) => {
 
   Project.find({})
     .then((project) => {
@@ -78,7 +78,7 @@ router.get('/all', authCheck ,(req, res) => {
     })
 })
 
-router.get('/details/:id', authCheck, (req, res) => {
+router.get('/details/:id', (req, res) => {
   const id = req.params.id
   Project.findById(id)
   .populate('creator')
@@ -179,29 +179,29 @@ router.put('/edit/:id', authCheck, (req, res) => {
   })
 })
 
-router.get('/:id', authCheck, (req, res) => {
-  const id = req.params.id
+// router.get('/:id', authCheck, (req, res) => {
+//   const id = req.params.id
 
-  Project.findById(id)
-    .then(project => {
-      if (!project) {
-        return res.status(404).json({
-          success: false,
-          message: 'Entry does not exists!'
-        })
-      }
+//   Project.findById(id)
+//     .then(project => {
+//       if (!project) {
+//         return res.status(404).json({
+//           success: false,
+//           message: 'Entry does not exists!'
+//         })
+//       }
 
-      let response = {
-        id,
-        title: project.make,
-        model: project.model,
-        year: project.year,
-        description: project.description,
-        image: project.image
-      }
+//       let response = {
+//         id,
+//         title: project.make,
+//         model: project.model,
+//         year: project.year,
+//         description: project.description,
+//         image: project.image
+//       }
 
-      res.status(200).json(response)
-    })
-})
+//       res.status(200).json(response)
+//     })
+// })
 
 module.exports = router
