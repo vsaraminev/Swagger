@@ -78,7 +78,7 @@ router.get('/all', (req, res) => {
     })
 })
 
-router.get('/details/:id', (req, res) => {
+router.get('/details/:id',(req, res) => {
   const id = req.params.id
   Project.findById(id)
   .populate('creator')

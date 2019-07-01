@@ -116,7 +116,25 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Project not found"
-    
+  /project/create:
+    post:
+      tags:
+        - "project"
+      summary: Add a new project
+      description: ''
+      operationId: addProject
+      parameters:
+        - in: body
+          name: body
+          description: Project object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Project'
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
 definitions:
   Part:
     type: "object"
