@@ -140,7 +140,6 @@ definitions:
     type: "object"
     required:
       - "title"
-      - "make"
       - "model"
       - "year"
       - "description"
@@ -148,9 +147,6 @@ definitions:
       - "image"
     properties:
       title:
-        type: "string"
-        minLength: 3
-      make:
         type: "string"
         minLength: 3
       model:
