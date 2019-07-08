@@ -13,7 +13,7 @@
  *
  */
 
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -24,16 +24,16 @@
     // Browser globals (root is window)
     factory(root.expect, root.SwaggerTunningPlace);
   }
-}(this, function(expect, SwaggerTunningPlace) {
+}(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
   var instance;
 
-  beforeEach(function() {
+  beforeEach(function () {
     instance = new SwaggerTunningPlace.ProjectApi();
   });
 
-  var getProperty = function(object, getter, property) {
+  var getProperty = function (object, getter, property) {
     // Use getter method if present; otherwise, get the property directly.
     if (typeof object[getter] === 'function')
       return object[getter]();
@@ -41,7 +41,7 @@
       return object[property];
   }
 
-  var setProperty = function(object, setter, property, value) {
+  var setProperty = function (object, setter, property, value) {
     // Use setter method if present; otherwise, set the property directly.
     if (typeof object[setter] === 'function')
       object[setter](value);
@@ -49,7 +49,7 @@
       object[property] = value;
   }
 
-  describe('ProjectApi', function() {
+  describe('ProjectApi', function () {
     // describe('addProject', function() {
     //   it('should call addProject successfully', function(done) {
     //     //uncomment below and update the code to test addProject
@@ -60,26 +60,32 @@
     //     done();
     //   });
     // });
-    // describe('projectAllGet', function() {
-    //   it('should call projectAllGet successfully', function(done) {
-    //     //uncomment below and update the code to test projectAllGet
-    //     //instance.projectAllGet(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
+    // describe('projectAllGet', function () {
+    //   it('should call projectAllGet successfully', function (done) {
+    //     instance.projectAllGet(function (error, data, res) {
+    //       if (error) throw error;
+    //       expect(res.status).to.be(200);
+    //       done();
+    //     });
     //   });
     // });
-    // describe('projectDetailsIdGet', function() {
-    //   it('should call projectDetailsIdGet successfully', function(done) {
-    //     //uncomment below and update the code to test projectDetailsIdGet
-    //     //instance.projectDetailsIdGet(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
+    describe('projectDetailsIdGet', function () {
+      // it('should call projectDetailsIdGet successfully', function (done) {
+      //   //uncomment below and update the code to test projectDetailsIdGet
+      //   instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d9', function (error, data, res) {
+      //     if (error) throw error;
+      //     expect(data.year).to.be(2015);
+      //     done();
+      //   });
+      // });
+      // it('should not find a project', function (done) {
+      //   //uncomment below and update the code to test projectDetailsIdGet
+      //   instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d1', function (error,data, res) {
+      //     expect(error.message).to.be("Not Found");
+      //     done();
+      //   });
+      // });      
+    });
   });
 
 }));
