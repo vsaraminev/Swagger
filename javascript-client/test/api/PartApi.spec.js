@@ -51,91 +51,90 @@ let expect = require("chai").expect;
   }
 
   describe('PartApi', function () {
-    // describe('addPart', function () {
-    //   it('should call addPart successfully', function (done) {
-    //     let part = {
-    //       "title": "test title1",
-    //       "model": "test model1",
-    //       "year": 2018,
-    //       "description": "This is test description. All-in-one kit",
-    //       "price": 50,
-    //       "image": "image1",
-    //     }
-    //     instance.addPart(part, function (error, data, res) {
-    //       if (error) throw error;
-    //       expect(res.status).to.be(200);
-    //       done();
-    //     });
-    //   });
-    //   it('should return bad request', function (done) {
-    //     let part = {
-    //       "model": "test model1",
-    //       "year": 2018,
-    //       "description": "This is test description. All-in-one kit",
-    //       "price": 50,
-    //       "image": "image1",
-    //     }
-    //     instance.addPart(part, function (error, data, res) {
-    //       expect(error.message).to.be("Bad Request");
-    //       done();
-    //     });
-    //   });
-    //   it('should return form errors', function (done) {
-    //     let part = {
-    //       "title": "",
-    //       "model": "test model1",
-    //       "year": 2018,
-    //       "description": "This is test description. All-in-one kit",
-    //       "price": 50,
-    //       "image": "image1",
-    //     }
-    //     instance.addPart(part, function (error, data, res) {
-    //       expect(res.body.message).to.be("Check the form for errors.");
-    //       done();
-    //     });
-    //   });
-    // });
-    // describe('partAllGet', function () {
-    //   it('should call partAllGet successfully', function (done) {
-    //     //uncomment below and update the code to test partAllGet
-    //     instance.partAllGet(function (error,data, res) {
-    //       if (error) throw error;
-    //       expect(res.body.length).to.equal(8);
-    //       done();
-    //     });
-    //   });
-    // });
-    //   describe('partDeleteIdDelete', function() {
-    //     it('should call partDeleteIdDelete successfully', function(done) {
-    //       //uncomment below and update the code to test partDeleteIdDelete
-    //       //instance.partDeleteIdDelete(function(error) {
-    //       //  if (error) throw error;
-    //       //expect().to.be();
-    //       //});5cbc45ba9a2ce649503569eb
-    //       done();
-    //     });
-    //   });
-    //   describe('partDetailsIdGet', function () {
-    //     it('partDetailsIdGet should be not null', function (done) {
-    //       instance.partDetailsIdGet('5cbc45ba9a2ce649503569eb', function (error, data) {
-    //         if (error) throw error;
-    //         expect(data).to.not.equal(null);
-    //         done();
-    //       });
-    //     });
-    //     it('should call partDetailsIdGet successfully', function (done) {
-    //       instance.partDetailsIdGet('5cbc45ba9a2ce649503569eb', function (error, data) {
-    //         if (error) throw error;
-    //         expect(data.price).to.be(250);
-    //         done();
-    //       });
-    //     });
-    //     it('should not find a part', function (done) {
-    //       instance.partDetailsIdGet('', function (error) {
-    //         expect(error.message).to.be("Not Found");
-    //         done();
-    //       });
-    //     });
-    //   });
+    describe('addPart', function () {
+      it('should call addPart successfully', function (done) {
+        let part = {
+          "title": "test title1",
+          "model": "test model1",
+          "year": 2018,
+          "description": "This is test description. All-in-one kit",
+          "price": 50,
+          "image": "image1",
+        }
+        instance.addPart(part, function (error, data, res) {
+          if (error) throw error;
+          expect(res.status).to.be(200);
+          done();
+        });
+      });
+      it('should return bad request', function (done) {
+        let part = {
+          "model": "test model1",
+          "year": 2018,
+          "description": "This is test description. All-in-one kit",
+          "price": 50,
+          "image": "image1",
+        }
+        instance.addPart(part, function (error, data, res) {
+          expect(error.message).to.be("Bad Request");
+          done();
+        });
+      });
+      it('should return form errors', function (done) {
+        let part = {
+          "title": "",
+          "model": "test model1",
+          "year": 2018,
+          "description": "This is test description. All-in-one kit",
+          "price": 50,
+          "image": "image1",
+        }
+        instance.addPart(part, function (error, data, res) {
+          expect(res.body.message).to.be("Check the form for errors.");
+          done();
+        });
+      });
+    });
+    describe('partAllGet', function () {
+      it('should call partAllGet successfully', function (done) {
+        instance.partAllGet(function (error, data, res) {
+          if (error) throw error;
+          expect(res.body.length).to.equal(8);
+          done();
+        });
+      });
+    });
+    describe('partDeleteIdDelete', function () {
+      // TODO
+      // it('should call partDeleteIdDelete successfully', function (done) {
+      //   //instance.partDeleteIdDelete(function(error) {
+      //   //  if (error) throw error;
+      //   //expect().to.be();
+      //   //});5cbc45ba9a2ce649503569eb
+      //   done();
+      // });
+    });
+    describe('partDetailsIdGet', function () {
+      it('partDetailsIdGet should be not null', function (done) {
+        instance.partDetailsIdGet('5cbc45ba9a2ce649503569eb', function (error, data) {
+          if (error) throw error;
+          expect(data).to.not.equal(null);
+          done();
+        });
+      });
+      it('should call partDetailsIdGet successfully', function (done) {
+        instance.partDetailsIdGet('5cbc45ba9a2ce649503569eb', function (error, data) {
+          if (error) throw error;
+          expect(data.price).to.be(250);
+          done();
+        });
+      });
+      it('should not find a part', function (done) {
+        instance.partDetailsIdGet('', function (error) {
+          expect(error.message).to.be("Not Found");
+          done();
+        });
+      });
+    });
   });
 }));

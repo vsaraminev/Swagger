@@ -50,41 +50,40 @@
   }
 
   describe('ProjectApi', function () {
-    // describe('addProject', function() {
-    //   it('should call addProject successfully', function(done) {
-    //     //uncomment below and update the code to test addProject
-    //     //instance.addProject(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
-    // describe('projectAllGet', function () {
-    //   it('should call projectAllGet successfully', function (done) {
-    //     instance.projectAllGet(function (error, data, res) {
-    //       if (error) throw error;
-    //       expect(res.status).to.be(200);
-    //       done();
-    //     });
-    //   });
-    // });
-    describe('projectDetailsIdGet', function () {
-      // it('should call projectDetailsIdGet successfully', function (done) {
-      //   //uncomment below and update the code to test projectDetailsIdGet
-      //   instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d9', function (error, data, res) {
-      //     if (error) throw error;
-      //     expect(data.year).to.be(2015);
-      //     done();
-      //   });
+    describe('addProject', function() {
+      //TODO
+      // it('should call addProject successfully', function(done) {
+      //   //uncomment below and update the code to test addProject
+      //   //instance.addProject(function(error) {
+      //   //  if (error) throw error;
+      //   //expect().to.be();
+      //   //});
+      //   done();
       // });
-      // it('should not find a project', function (done) {
-      //   //uncomment below and update the code to test projectDetailsIdGet
-      //   instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d1', function (error,data, res) {
-      //     expect(error.message).to.be("Not Found");
-      //     done();
-      //   });
-      // });      
+    });
+    describe('projectAllGet', function () {
+      it('should call projectAllGet successfully', function (done) {
+        instance.projectAllGet(function (error, data, res) {
+          if (error) throw error;
+          expect(res.status).to.be(200);
+          done();
+        });
+      });
+    });
+    describe('projectDetailsIdGet', function () {
+      it('should call projectDetailsIdGet successfully', function (done) {
+        instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d9', function (error, data, res) {
+          if (error) throw error;
+          expect(data.year).to.be(2015);
+          done();
+        });
+      });
+      it('should not find a project', function (done) {
+        instance.projectDetailsIdGet('5cb20d8a12af7d3af8b014d1', function (error,data, res) {
+          expect(error.message).to.be("Not Found");
+          done();
+        });
+      });      
     });
   });
 
