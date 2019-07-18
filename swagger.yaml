@@ -59,6 +59,11 @@ paths:
         description: "ID of part to return"
         required: true
         type: "string"
+      security:
+        - Bearer: []
+      x-security-scopes:
+        - admin
+        - user
       responses:
         200:
           description: "successful operation"
@@ -135,6 +140,42 @@ paths:
           description: OK
         '405':
           description: Invalid input
+  /auth/login:
+    post:
+      tags:
+        - "user"
+      summary: "Logs user into the system"
+      parameters:
+        - in: "body"
+          name: body
+          description: "The user email for login"
+          required: true
+          schema:
+            type: object
+            default: {"name":""}
+      responses:
+        200:
+          description: OK
+  /auth/register:
+    post:
+      tags:
+        - "user"
+      summary: "Register user into the system"
+      parameters:
+        - in: "body"
+          name: body
+          description: "The user email, passwors and name for register"
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+securityDefinitions:
+  Bearer:
+        type: apiKey
+        name: Authorization
+        in: header
 definitions:
   Part:
     type: "object"
@@ -198,6 +239,7 @@ definitions:
     type: "object"
     required:
       - "email"
+      - "password"
       - "name"
     properties:
       email: 
