@@ -32,7 +32,8 @@ module.exports = new PassportLocalStrategy({
     }
 
     const payload = {
-      sub: savedUser.id
+      sub: savedUser.id,
+      role: savedUser.roles
     }
 
     // create a token string

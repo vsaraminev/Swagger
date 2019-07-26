@@ -55,7 +55,6 @@ function validatePartForm(payload) {
 
 router.post('/create', (req, res) => {
   const part = req.body
-  console.log(part)
   const validationResult = validatePartForm(part)
   if (!validationResult.success) {
     return res.status(400).json({
@@ -64,6 +63,13 @@ router.post('/create', (req, res) => {
       errors: validationResult.errors
     })
   }
+
+  // if ((project.creator.toString() != user && !req.user.roles.includes("Admin"))) {
+  //   return res.status(401).json({
+  //     success: false,
+  //     message: 'Unauthorized!'
+  //   })
+  // }
 
   Part.create(part)
     .then(() => {
@@ -82,7 +88,7 @@ router.get('/all', (req, res) => {
     })
 })
 
-router.get('/details/:id',  (req, res) => {
+router.get('/details/:id', (req, res) => {
   const id = req.params.id
   Part.findById(id)
     .then((part) => {

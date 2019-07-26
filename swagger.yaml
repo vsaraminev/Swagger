@@ -61,9 +61,6 @@ paths:
         type: "string"
       security:
         - Bearer: []
-      x-security-scopes:
-        - admin
-        - user
       responses:
         200:
           description: "successful operation"
@@ -94,6 +91,8 @@ paths:
       tags:
         - "project"
       summary: Find All Projects
+      security:
+        - Bearer: []
       responses:
         '200':
           description: successful operation
@@ -112,6 +111,8 @@ paths:
         description: "ID of project to return"
         required: true
         type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
           description: "successful operation"
@@ -134,43 +135,56 @@ paths:
           description: Project object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/Project'
+            $ref: '#/definitions/Project'     
+      security:
+        - Bearer: []
       responses:
         '200':
           description: OK
         '405':
           description: Invalid input
-  /auth/login:
-    post:
+  /project/edit/{id}:
+    put:
       tags:
-        - "user"
-      summary: "Logs user into the system"
+        - "project"
+      description: "Update a project"
       parameters:
-        - in: "body"
-          name: body
-          description: "The user email for login"
-          required: true
-          schema:
-            type: object
-            default: {"name":""}
+      - name: "id"
+        in: "path"
+        description: "Id of the project to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated project object"
+        required: true
+        schema:
+          $ref: "#/definitions/Project"
+      security:
+        - Bearer: []
       responses:
         200:
-          description: OK
-  /auth/register:
-    post:
+          description: "Project edited successfully!"
+        404:
+          description: "Project does not exists!" 
+  /project/delete/{id}:
+    delete:
       tags:
-        - "user"
-      summary: "Register user into the system"
+        - "project"
+      description: "Delete a single project"
       parameters:
-        - in: "body"
-          name: body
-          description: "The user email, passwors and name for register"
-          required: true
-          schema:
-            $ref: '#/definitions/User'
+      - name: "id"
+        in: "path"
+        description: "Id of the project to delete"
+        required: true
+        type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
-          description: OK
+          description: "Project deleted successfully!"
+        404:
+          description: "Project does not exists!"   
 securityDefinitions:
   Bearer:
         type: apiKey
@@ -229,12 +243,10 @@ definitions:
         minLength: 10
       image:
         type: "string"
-      creator:
-        $ref: "#/definitions/User"
       comments:
         type: "array"
         items:
-          $ref: "#/definitions/Comment"
+          type: "string"        
   User:
     type: "object"
     required:
@@ -262,21 +274,9 @@ definitions:
     type: "object"
     required:
       - "content"
-      - "projectId"
-      - "creatorName"
-      - "creatorId"
     properties:
       content:
         type: "string"
-      projectId:
-        $ref: "#/definitions/Project"
-      creatorName:
-        $ref: "#/definitions/User"
-      creatorId: 
-        $ref: "#/definitions/User"
-      createdOn:
-        type: "string"
-        format: "date"
   Order:
     type: "object"
     required:
