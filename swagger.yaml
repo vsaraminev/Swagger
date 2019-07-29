@@ -31,6 +31,8 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Part'
+      security:
+        - Bearer: []
       responses:
         '200':
           description: OK
@@ -70,6 +72,30 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Part not found"
+  /part/edit/{id}:
+    put:
+      tags:
+        - "part"
+      description: "Update a part"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of the part to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated part object"
+        required: true
+        schema:
+          $ref: "#/definitions/Part"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Part edited successfully!"
+        404:
+          description: "Part does not exists!" 
   /part/delete/{id}:
     delete:
       tags:
@@ -81,11 +107,34 @@ paths:
         description: "Id of the part to delete"
         required: true
         type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
           description: "Part deleted successfully!"
         404:
           description: "Part does not exists!" 
+  /project/create:
+    post:
+      tags:
+        - "project"
+      summary: Add a new project
+      description: ''
+      operationId: addProject
+      parameters:
+        - in: body
+          name: body
+          description: Project object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Project'     
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
   /project/all:
     get:
       tags:
@@ -122,27 +171,6 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Project not found"
-  /project/create:
-    post:
-      tags:
-        - "project"
-      summary: Add a new project
-      description: ''
-      operationId: addProject
-      parameters:
-        - in: body
-          name: body
-          description: Project object that needs to be added
-          required: true
-          schema:
-            $ref: '#/definitions/Project'     
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: OK
-        '405':
-          description: Invalid input
   /project/edit/{id}:
     put:
       tags:

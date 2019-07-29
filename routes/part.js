@@ -53,8 +53,22 @@ function validatePartForm(payload) {
   }
 }
 
-router.post('/create', (req, res) => {
+function decodeToken(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const buff = new Buffer(base64, 'base64');
+  const payloadinit = buff.toString('ascii');
+
+  return payload = JSON.parse(payloadinit);
+}
+
+router.post('/create', authCheck, (req, res) => {
   const part = req.body
+
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  const userRoles = decodedToken.role;
+
   const validationResult = validatePartForm(part)
   if (!validationResult.success) {
     return res.status(400).json({
@@ -64,12 +78,12 @@ router.post('/create', (req, res) => {
     })
   }
 
-  // if ((project.creator.toString() != user && !req.user.roles.includes("Admin"))) {
-  //   return res.status(401).json({
-  //     success: false,
-  //     message: 'Unauthorized!'
-  //   })
-  // }
+  if (!userRoles.includes("Admin")) {
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized!'
+    })
+  }
 
   Part.create(part)
     .then(() => {
@@ -88,7 +102,7 @@ router.get('/all', (req, res) => {
     })
 })
 
-router.get('/details/:id', (req, res) => {
+router.get('/details/:id', authCheck, (req, res) => {
   const id = req.params.id
   Part.findById(id)
     .then((part) => {
@@ -114,7 +128,12 @@ router.get('/details/:id', (req, res) => {
 })
 
 router.delete('/delete/:id', (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
+
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  const userRoles = decodedToken.role;
+
   Part.findById(id)
     .then((part) => {
       if (!part) {
@@ -124,7 +143,7 @@ router.delete('/delete/:id', (req, res) => {
         })
       }
 
-      if (!req.user.roles.includes("Admin")) {
+      if (!userRoles.includes("Admin")) {
         return res.status(401).json({
           success: false,
           message: 'Unauthorized!'
