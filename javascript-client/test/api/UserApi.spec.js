@@ -30,7 +30,7 @@
   var instance;
 
   beforeEach(function() {
-    instance = new SwaggerTunningPlace.Order();
+    instance = new SwaggerTunningPlace.UserApi();
   });
 
   var getProperty = function(object, getter, property) {
@@ -49,19 +49,17 @@
       object[property] = value;
   }
 
-  describe('Order', function() {
-    it('should create an instance of Order', function() {
-      // uncomment below and update the code to test Order
-      //var instance = new SwaggerTunningPlace.Order();
-      //expect(instance).to.be.a(SwaggerTunningPlace.Order);
+  describe('UserApi', function() {
+    describe('userInfoGet', function() {
+      it('should call userInfoGet successfully', function(done) {
+        //uncomment below and update the code to test userInfoGet
+        //instance.userInfoGet(function(error) {
+        //  if (error) throw error;
+        //expect().to.be();
+        //});
+        done();
+      });
     });
-
-    it('should have the property part (base name: "part")', function() {
-      // uncomment below and update the code to test the property part
-      //var instance = new SwaggerTunningPlace.Order();
-      //expect(instance).to.be();
-    });
-
   });
 
 }));

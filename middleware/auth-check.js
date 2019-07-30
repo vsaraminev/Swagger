@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 module.exports = (req, res, next) => {
-  console.log(req.headers);
   if (!req.headers.authorization) {
 	console.log('HERE');
     return res.status(401).end()

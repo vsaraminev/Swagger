@@ -4,22 +4,20 @@ const Order = require('../models/Order');
 
 const router = new express.Router()
 
+function decodeToken(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const buff = new Buffer(base64, 'base64');
+    const payloadinit = buff.toString('ascii');
+
+    return payload = JSON.parse(payloadinit);
+}
+
 router.post('/add/:partId', authCheck, async (req, res) => {
     const partId = req.params.partId;
-    const userId = req.user._id;
-
-    // let part = await Part.findById(partId)
-    // .then((data)=>{
-    //     Order.create({
-    //         buyer: user,
-    //         part: data
-    //     }).then(() => {
-    //         res.status(200).json({
-    //             success: true,
-    //             message: 'Part added successfully to cart.'
-    //         })
-    //     })
-    // })
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = decodeToken(token);
+    const userId = decodedToken.sub;
 
     Order.create({
         buyer: userId,
@@ -34,7 +32,9 @@ router.post('/add/:partId', authCheck, async (req, res) => {
 })
 
 router.get('/user', authCheck, async (req, res) => {
-    const user = req.user._id
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = decodeToken(token);
+    const user = decodedToken.sub;
 
     await Order.find({ buyer: user })
         .populate('part')

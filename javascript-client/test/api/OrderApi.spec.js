@@ -30,7 +30,7 @@
   var instance;
 
   beforeEach(function() {
-    instance = new SwaggerTunningPlace.ProjectApi();
+    instance = new SwaggerTunningPlace.OrderApi();
   });
 
   var getProperty = function(object, getter, property) {
@@ -49,51 +49,21 @@
       object[property] = value;
   }
 
-  describe('ProjectApi', function() {
-    describe('addProject', function() {
-      it('should call addProject successfully', function(done) {
-        //uncomment below and update the code to test addProject
-        //instance.addProject(function(error) {
+  describe('OrderApi', function() {
+    describe('orderAddPartIdPost', function() {
+      it('should call orderAddPartIdPost successfully', function(done) {
+        //uncomment below and update the code to test orderAddPartIdPost
+        //instance.orderAddPartIdPost(function(error) {
         //  if (error) throw error;
         //expect().to.be();
         //});
         done();
       });
     });
-    describe('projectAllGet', function() {
-      it('should call projectAllGet successfully', function(done) {
-        //uncomment below and update the code to test projectAllGet
-        //instance.projectAllGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectDeleteIdDelete', function() {
-      it('should call projectDeleteIdDelete successfully', function(done) {
-        //uncomment below and update the code to test projectDeleteIdDelete
-        //instance.projectDeleteIdDelete(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectDetailsIdGet', function() {
-      it('should call projectDetailsIdGet successfully', function(done) {
-        //uncomment below and update the code to test projectDetailsIdGet
-        //instance.projectDetailsIdGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectEditIdPut', function() {
-      it('should call projectEditIdPut successfully', function(done) {
-        //uncomment below and update the code to test projectEditIdPut
-        //instance.projectEditIdPut(function(error) {
+    describe('orderUserGet', function() {
+      it('should call orderUserGet successfully', function(done) {
+        //uncomment below and update the code to test orderUserGet
+        //instance.orderUserGet(function(error) {
         //  if (error) throw error;
         //expect().to.be();
         //});

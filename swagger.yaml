@@ -31,6 +31,8 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Part'
+      security:
+        - Bearer: []
       responses:
         '200':
           description: OK
@@ -59,6 +61,8 @@ paths:
         description: "ID of part to return"
         required: true
         type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
           description: "successful operation"
@@ -68,6 +72,30 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Part not found"
+  /part/edit/{id}:
+    put:
+      tags:
+        - "part"
+      description: "Update a part"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of the part to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated part object"
+        required: true
+        schema:
+          $ref: "#/definitions/Part"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Part edited successfully!"
+        404:
+          description: "Part does not exists!" 
   /part/delete/{id}:
     delete:
       tags:
@@ -79,16 +107,41 @@ paths:
         description: "Id of the part to delete"
         required: true
         type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
           description: "Part deleted successfully!"
         404:
           description: "Part does not exists!" 
+  /project/create:
+    post:
+      tags:
+        - "project"
+      summary: Add a new project
+      description: ''
+      operationId: addProject
+      parameters:
+        - in: body
+          name: body
+          description: Project object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Project'     
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
   /project/all:
     get:
       tags:
         - "project"
       summary: Find All Projects
+      security:
+        - Bearer: []
       responses:
         '200':
           description: successful operation
@@ -107,6 +160,8 @@ paths:
         description: "ID of project to return"
         required: true
         type: "string"
+      security:
+        - Bearer: []
       responses:
         200:
           description: "successful operation"
@@ -116,25 +171,100 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Project not found"
-  /project/create:
-    post:
+  /project/edit/{id}:
+    put:
       tags:
         - "project"
-      summary: Add a new project
-      description: ''
-      operationId: addProject
+      description: "Update a project"
       parameters:
-        - in: body
-          name: body
-          description: Project object that needs to be added
-          required: true
-          schema:
-            $ref: '#/definitions/Project'
+      - name: "id"
+        in: "path"
+        description: "Id of the project to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated project object"
+        required: true
+        schema:
+          $ref: "#/definitions/Project"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Project edited successfully!"
+        404:
+          description: "Project does not exists!" 
+  /project/delete/{id}:
+    delete:
+      tags:
+        - "project"
+      description: "Delete a single project"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of the project to delete"
+        required: true
+        type: "string"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Project deleted successfully!"
+        404:
+          description: "Project does not exists!"   
+  /order/add/{partId}:
+    post:
+      tags:
+        - "order"
+      summary: Add a new order to the cart.
+      description: ''
+      parameters:
+      - name: "partId"
+        in: "path"
+        description: "ID of the part to buy"
+        required: true
+        type: "string"
+      security:
+        - Bearer: []
       responses:
         '200':
           description: OK
         '405':
           description: Invalid input
+  /order/user:
+    get:
+      tags:
+        - "order"
+      summary: Find All User orders
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Order"
+        '400':
+          description: Invalid value
+  /user/info:
+    get:
+      tags:
+        - "user"
+      summary: Find User info
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: "#/definitions/User"
+        '400':
+          description: Invalid value
+securityDefinitions:
+  Bearer:
+        type: apiKey
+        name: Authorization
+        in: header
 definitions:
   Part:
     type: "object"
@@ -188,16 +318,15 @@ definitions:
         minLength: 10
       image:
         type: "string"
-      creator:
-        $ref: "#/definitions/User"
       comments:
         type: "array"
         items:
-          $ref: "#/definitions/Comment"
+          type: "string"        
   User:
     type: "object"
     required:
       - "email"
+      - "password"
       - "name"
     properties:
       email: 
@@ -220,29 +349,13 @@ definitions:
     type: "object"
     required:
       - "content"
-      - "projectId"
-      - "creatorName"
-      - "creatorId"
     properties:
       content:
         type: "string"
-      projectId:
-        $ref: "#/definitions/Project"
-      creatorName:
-        $ref: "#/definitions/User"
-      creatorId: 
-        $ref: "#/definitions/User"
-      createdOn:
-        type: "string"
-        format: "date"
   Order:
     type: "object"
     required:
-      - "buyer"
       - "part"
     properties:
-      buyer:
-        $ref: "#/definitions/User"
       part:
-        $ref: "#/definitions/Part"
-    
+        type: "string"    

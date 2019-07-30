@@ -10,6 +10,7 @@ const partRoutes = require('../routes/part')
 const commentRoutes = require('../routes/comment')
 const orderRoutes = require('../routes/order')
 const statsRoutes = require('../routes/stats')
+const userRoutes = require('../routes/user')
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
@@ -36,4 +37,5 @@ module.exports = app => {
   app.use('/part', partRoutes)
   app.use('/comment', commentRoutes)
   app.use('/stats', statsRoutes)
+  app.use('/user', userRoutes)
 }

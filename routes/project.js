@@ -4,13 +4,12 @@ const Project = require('../models/Project');
 
 const router = new express.Router()
 
-function validateProjectForm (payload) {
+function validateProjectForm(payload) {
   const errors = {}
   let isFormValid = true
   let message = ''
 
   payload.year = parseInt(payload.year)
-  payload.price = parseInt(payload.price)
 
   if (!payload || typeof payload.title !== 'string' || payload.title.length < 3) {
     isFormValid = false
@@ -48,9 +47,21 @@ function validateProjectForm (payload) {
   }
 }
 
+function decodeToken(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const buff = new Buffer(base64, 'base64');
+  const payloadinit = buff.toString('ascii');
+
+  return payload = JSON.parse(payloadinit);
+}
+
 router.post('/create', authCheck, (req, res) => {
-  const project = req.body
-  project.creator = req.user._id
+  const project = req.body;
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  project.creator = decodedToken.sub;
+
   const validationResult = validateProjectForm(project)
   if (!validationResult.success) {
     return res.status(400).json({
@@ -70,7 +81,7 @@ router.post('/create', authCheck, (req, res) => {
     })
 })
 
-router.get('/all', (req, res) => {
+router.get('/all', authCheck, (req, res) => {
 
   Project.find({})
     .then((project) => {
@@ -78,10 +89,10 @@ router.get('/all', (req, res) => {
     })
 })
 
-router.get('/details/:id',(req, res) => {
+router.get('/details/:id', authCheck, (req, res) => {
   const id = req.params.id
   Project.findById(id)
-  .populate('creator')
+    .populate('creator')
     .then((project) => {
       if (!project) {
         return res.status(404).json({
@@ -104,18 +115,12 @@ router.get('/details/:id',(req, res) => {
     })
 })
 
-router.get('/user', authCheck, (req, res) => {
-  const user = req.user._id
-
-  Project.find({creator: user})
-    .then((project) => {
-      return res.status(200).json(project)
-    })
-})
-
 router.delete('/delete/:id', authCheck, (req, res) => {
   const id = req.params.id
-  const user = req.user._id
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  const user = decodedToken.sub;
+  const userRoles = decodedToken.role;
 
   Project.findById(id)
     .then((project) => {
@@ -126,11 +131,11 @@ router.delete('/delete/:id', authCheck, (req, res) => {
         })
       }
 
-      if ((project.creator.toString() != user && !req.user.roles.includes("Admin"))) {
-         return res.status(401).json({
-           success: false,
-           message: 'Unauthorized!'
-         })
+      if ((project.creator.toString() != user && !userRoles.includes("Admin"))) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized!'
+        })
       }
 
       Project.findByIdAndDelete(id)
@@ -154,7 +159,11 @@ router.put('/edit/:id', authCheck, (req, res) => {
     })
   }
 
-  if (!req.user.roles.includes('Admin')) {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  const userRoles = decodedToken.role;
+
+  if (!userRoles.includes('Admin')) {
     return res.status(401).json({
       success: false,
       message: 'Unauthorized!'
@@ -176,32 +185,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
         success: true,
         message: 'Project edited successfully!'
       })
-  })
+    })
 })
-
-// router.get('/:id', authCheck, (req, res) => {
-//   const id = req.params.id
-
-//   Project.findById(id)
-//     .then(project => {
-//       if (!project) {
-//         return res.status(404).json({
-//           success: false,
-//           message: 'Entry does not exists!'
-//         })
-//       }
-
-//       let response = {
-//         id,
-//         title: project.make,
-//         model: project.model,
-//         year: project.year,
-//         description: project.description,
-//         image: project.image
-//       }
-
-//       res.status(200).json(response)
-//     })
-// })
 
 module.exports = router
