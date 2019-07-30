@@ -95,9 +95,17 @@ Please follow the [installation](#installation) instruction and execute the foll
 ```javascript
 var SwaggerTunningPlace = require('swagger_tunning_place');
 
-var api = new SwaggerTunningPlace.PartApi()
+var defaultClient = SwaggerTunningPlace.ApiClient.instance;
 
-var body = new SwaggerTunningPlace.Part(); // {Part} Part object that needs to be added to the store
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new SwaggerTunningPlace.OrderApi()
+
+var partId = "partId_example"; // {String} ID of the part to buy
 
 
 var callback = function(error, data, response) {
@@ -107,7 +115,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.addPart(body, callback);
+api.orderAddPartIdPost(partId, callback);
 
 ```
 
@@ -117,13 +125,19 @@ All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*SwaggerTunningPlace.OrderApi* | [**orderAddPartIdPost**](docs/OrderApi.md#orderAddPartIdPost) | **POST** /order/add/{partId} | Add a new order to the cart.
+*SwaggerTunningPlace.OrderApi* | [**orderUserGet**](docs/OrderApi.md#orderUserGet) | **GET** /order/user | Find All User orders
 *SwaggerTunningPlace.PartApi* | [**addPart**](docs/PartApi.md#addPart) | **POST** /part/create | Add a new part to the store
 *SwaggerTunningPlace.PartApi* | [**partAllGet**](docs/PartApi.md#partAllGet) | **GET** /part/all | Find All Parts
 *SwaggerTunningPlace.PartApi* | [**partDeleteIdDelete**](docs/PartApi.md#partDeleteIdDelete) | **DELETE** /part/delete/{id} | 
 *SwaggerTunningPlace.PartApi* | [**partDetailsIdGet**](docs/PartApi.md#partDetailsIdGet) | **GET** /part/details/{id} | 
+*SwaggerTunningPlace.PartApi* | [**partEditIdPut**](docs/PartApi.md#partEditIdPut) | **PUT** /part/edit/{id} | 
 *SwaggerTunningPlace.ProjectApi* | [**addProject**](docs/ProjectApi.md#addProject) | **POST** /project/create | Add a new project
 *SwaggerTunningPlace.ProjectApi* | [**projectAllGet**](docs/ProjectApi.md#projectAllGet) | **GET** /project/all | Find All Projects
+*SwaggerTunningPlace.ProjectApi* | [**projectDeleteIdDelete**](docs/ProjectApi.md#projectDeleteIdDelete) | **DELETE** /project/delete/{id} | 
 *SwaggerTunningPlace.ProjectApi* | [**projectDetailsIdGet**](docs/ProjectApi.md#projectDetailsIdGet) | **GET** /project/details/{id} | 
+*SwaggerTunningPlace.ProjectApi* | [**projectEditIdPut**](docs/ProjectApi.md#projectEditIdPut) | **PUT** /project/edit/{id} | 
+*SwaggerTunningPlace.UserApi* | [**userInfoGet**](docs/UserApi.md#userInfoGet) | **GET** /user/info | Find User info
 
 
 ## Documentation for Models
@@ -137,5 +151,10 @@ Class | Method | HTTP request | Description
 
 ## Documentation for Authorization
 
- All endpoints do not require authorization.
+
+### Bearer
+
+- **Type**: API key
+- **API key parameter name**: Authorization
+- **Location**: HTTP header
 

@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **year** | **Number** |  | 
 **description** | **String** |  | 
 **image** | **String** |  | 
-**creator** | [**User**](User.md) |  | [optional] 
-**comments** | [**[Comment]**](Comment.md) |  | [optional] 
+**comments** | **[String]** |  | [optional] 
 
 
