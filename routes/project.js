@@ -115,15 +115,6 @@ router.get('/details/:id', authCheck, (req, res) => {
     })
 })
 
-// router.get('/user', authCheck, (req, res) => {
-//   const user = req.user._id
-
-//   Project.find({ creator: user })
-//     .then((project) => {
-//       return res.status(200).json(project)
-//     })
-// })
-
 router.delete('/delete/:id', authCheck, (req, res) => {
   const id = req.params.id
   const token = req.headers.authorization.split(' ')[1];

@@ -213,6 +213,39 @@ paths:
           description: "Project deleted successfully!"
         404:
           description: "Project does not exists!"   
+  /order/add/{partId}:
+    post:
+      tags:
+        - "order"
+      summary: Add a new order to the cart.
+      description: ''
+      parameters:
+      - name: "partId"
+        in: "path"
+        description: "ID of the part to buy"
+        required: true
+        type: "string"
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+  /order/user:
+    get:
+      tags:
+        - "order"
+      summary: Find All User orders
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Order"
+        '400':
+          description: Invalid value
 securityDefinitions:
   Bearer:
         type: apiKey
@@ -308,11 +341,7 @@ definitions:
   Order:
     type: "object"
     required:
-      - "buyer"
       - "part"
     properties:
-      buyer:
-        $ref: "#/definitions/User"
       part:
-        $ref: "#/definitions/Part"
-    
+        type: "string"    
