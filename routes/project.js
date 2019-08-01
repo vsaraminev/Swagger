@@ -56,11 +56,11 @@ function decodeToken(token) {
   return payload = JSON.parse(payloadinit);
 }
 
-router.post('/create', authCheck, (req, res) => {
+router.post('/create', (req, res) => {
   const project = req.body;
-  const token = req.headers.authorization.split(' ')[1];
-  const decodedToken = decodeToken(token);
-  project.creator = decodedToken.sub;
+  // const token = req.headers.authorization.split(' ')[1];
+  // const decodedToken = decodeToken(token);
+  // project.creator = decodedToken.sub;
 
   const validationResult = validateProjectForm(project)
   if (!validationResult.success) {
@@ -72,11 +72,11 @@ router.post('/create', authCheck, (req, res) => {
   }
 
   Project.create(project)
-    .then(() => {
+    .then((data) => {
       res.status(200).json({
         success: true,
         message: 'Project added successfully.',
-        project
+        project: data
       })
     })
 })
@@ -89,7 +89,7 @@ router.get('/all', authCheck, (req, res) => {
     })
 })
 
-router.get('/details/:id', authCheck, (req, res) => {
+router.get('/details/:id',  (req, res) => {
   const id = req.params.id
   Project.findById(id)
     .populate('creator')

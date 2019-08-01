@@ -13,7 +13,12 @@
  *
  */
 
-(function(root, factory) {
+
+(function (root, factory) {
+
+  const jwt = require('jsonwebtoken');
+  const encryption = require('../../util/encryption');
+
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -24,16 +29,18 @@
     // Browser globals (root is window)
     factory(root.expect, root.SwaggerTunningPlace);
   }
-}(this, function(expect, SwaggerTunningPlace) {
+}(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
   var instance;
+  const User = new SwaggerTunningPlace.User();
 
-  beforeEach(function() {
+  beforeEach(function () {
     instance = new SwaggerTunningPlace.ProjectApi();
+    instance.apiClient.basePath = 'http://localhost:5000';
   });
 
-  var getProperty = function(object, getter, property) {
+  var getProperty = function (object, getter, property) {
     // Use getter method if present; otherwise, get the property directly.
     if (typeof object[getter] === 'function')
       return object[getter]();
@@ -41,7 +48,7 @@
       return object[property];
   }
 
-  var setProperty = function(object, setter, property, value) {
+  var setProperty = function (object, setter, property, value) {
     // Use setter method if present; otherwise, set the property directly.
     if (typeof object[setter] === 'function')
       object[setter](value);
@@ -49,57 +56,128 @@
       object[property] = value;
   }
 
-  describe('ProjectApi', function() {
-    describe('addProject', function() {
-      it('should call addProject successfully', function(done) {
+  function loginUser(email, password, done) {
+    const user = {
+      email: email.trim(),
+      password: password.trim()
+    }
+
+    User.findOne({ email: user.email }).then((savedUser) => {
+      if (!savedUser) {
+        const error = new Error('Incorrect email or password')
+        error.name = 'IncorrectCredentialsError'
+
+        return done(error)
+      }
+
+      const isMatch = savedUser.hashedPass === encryption.generateHashedPassword(savedUser.salt, password);
+
+      if (!isMatch) {
+        const error = new Error('Incorrect email or password')
+        error.name = 'IncorrectCredentialsError'
+
+        return done(error)
+      }
+
+      const payload = {
+        sub: savedUser.id,
+        role: savedUser.roles
+      }
+
+      // create a token string
+      const token = jwt.sign(payload, 's0m3 r4nd0m str1ng');
+
+      return done(null, token)
+    })
+  }
+
+  describe('ProjectApi', function () {
+    describe('End to End', function () {
+      it('successfully', function (done) {
+        //const userToken = loginUser('gosho@abv.bg', 'gosho');
+
+        let project = {
+          "title": "test Project",
+          "model": "test Model",
+          "year": 2018,
+          "description": "This is test description",
+          "image": "string",
+          "comments": [
+            "string"
+          ]
+        };
+
+        var projectId;
+
+        instance.addProject(project, function (error, data, res) {
+          if (error) throw error;
+          projectId = res.body.project._id;
+          instance.projectDetailsIdGet(projectId, function (error, res) {
+            expect(res.status).to.be(200);
+            done();
+          })
+          expect(res.status).to.be(200);
+          done();
+        });
+
         //uncomment below and update the code to test addProject
         //instance.addProject(function(error) {
         //  if (error) throw error;
         //expect().to.be();
         //});
-        done();
+        //done();
       });
     });
-    describe('projectAllGet', function() {
-      it('should call projectAllGet successfully', function(done) {
-        //uncomment below and update the code to test projectAllGet
-        //instance.projectAllGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectDeleteIdDelete', function() {
-      it('should call projectDeleteIdDelete successfully', function(done) {
-        //uncomment below and update the code to test projectDeleteIdDelete
-        //instance.projectDeleteIdDelete(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectDetailsIdGet', function() {
-      it('should call projectDetailsIdGet successfully', function(done) {
-        //uncomment below and update the code to test projectDetailsIdGet
-        //instance.projectDetailsIdGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('projectEditIdPut', function() {
-      it('should call projectEditIdPut successfully', function(done) {
-        //uncomment below and update the code to test projectEditIdPut
-        //instance.projectEditIdPut(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
+    // describe('addProject', function () {
+    //   it('should call addProject successfully', function (done) {
+    //     //uncomment below and update the code to test addProject
+    //     //instance.addProject(function(error) {
+    //     //  if (error) throw error;
+    //     //expect().to.be();
+    //     //});
+    //     done();
+    //   });
+    // });
+    // describe('projectAllGet', function () {
+    //   it('should call projectAllGet successfully', function (done) {
+    //     //uncomment below and update the code to test projectAllGet
+    //     //instance.projectAllGet(function(error) {
+    //     //  if (error) throw error;
+    //     //expect().to.be();
+    //     //});
+    //     done();
+    //   });
+    // });
+    // describe('projectDeleteIdDelete', function () {
+    //   it('should call projectDeleteIdDelete successfully', function (done) {
+    //     //uncomment below and update the code to test projectDeleteIdDelete
+    //     //instance.projectDeleteIdDelete(function(error) {
+    //     //  if (error) throw error;
+    //     //expect().to.be();
+    //     //});
+    //     done();
+    //   });
+    // });
+    // describe('projectDetailsIdGet', function () {
+    //   it('should call projectDetailsIdGet successfully', function (done) {
+    //     //uncomment below and update the code to test projectDetailsIdGet
+    //     //instance.projectDetailsIdGet(function(error) {
+    //     //  if (error) throw error;
+    //     //expect().to.be();
+    //     //});
+    //     done();
+    //   });
+    // });
+    // describe('projectEditIdPut', function () {
+    //   it('should call projectEditIdPut successfully', function (done) {
+    //     //uncomment below and update the code to test projectEditIdPut
+    //     //instance.projectEditIdPut(function(error) {
+    //     //  if (error) throw error;
+    //     //expect().to.be();
+    //     //});
+    //     done();
+    //   });
+    // });
   });
 
 }));
