@@ -31,9 +31,9 @@
   }
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
+  const authUtil = require('../common/authentication_utils');
 
   var instance;
-  const User = new SwaggerTunningPlace.User();
 
   beforeEach(function () {
     instance = new SwaggerTunningPlace.ProjectApi();
@@ -56,45 +56,10 @@
       object[property] = value;
   }
 
-  function loginUser(email, password, done) {
-    const user = {
-      email: email.trim(),
-      password: password.trim()
-    }
-
-    User.findOne({ email: user.email }).then((savedUser) => {
-      if (!savedUser) {
-        const error = new Error('Incorrect email or password')
-        error.name = 'IncorrectCredentialsError'
-
-        return done(error)
-      }
-
-      const isMatch = savedUser.hashedPass === encryption.generateHashedPassword(savedUser.salt, password);
-
-      if (!isMatch) {
-        const error = new Error('Incorrect email or password')
-        error.name = 'IncorrectCredentialsError'
-
-        return done(error)
-      }
-
-      const payload = {
-        sub: savedUser.id,
-        role: savedUser.roles
-      }
-
-      // create a token string
-      const token = jwt.sign(payload, 's0m3 r4nd0m str1ng');
-
-      return done(null, token)
-    })
-  }
-
   describe('ProjectApi', function () {
-    describe('End to End', function () {
-      it('successfully', function (done) {
-        //const userToken = loginUser('gosho@abv.bg', 'gosho');
+    describe.only('End to End', function () {
+      it('Authenticated user add project and get details successfully', async function (done) {
+        const userToken = await authUtil.loginUser('gosho@abv.bg', 'gosho');
 
         let project = {
           "title": "test Project",
@@ -107,77 +72,19 @@
           ]
         };
 
-        var projectId;
+        instance.apiClient.authentications['Bearer'].apiKey = userToken;
+        instance.apiClient.authentications['Bearer'].apiKeyPrefix = "Bearer";
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
-          projectId = res.body.project._id;
-          instance.projectDetailsIdGet(projectId, function (error, res) {
+          let projectId = res.body.project._id;
+          instance.projectDetailsIdGet(projectId, function (error, data, res) {
+            if (error) throw error;
             expect(res.status).to.be(200);
             done();
           })
-          expect(res.status).to.be(200);
-          done();
         });
-
-        //uncomment below and update the code to test addProject
-        //instance.addProject(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        //done();
       });
     });
-    // describe('addProject', function () {
-    //   it('should call addProject successfully', function (done) {
-    //     //uncomment below and update the code to test addProject
-    //     //instance.addProject(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
-    // describe('projectAllGet', function () {
-    //   it('should call projectAllGet successfully', function (done) {
-    //     //uncomment below and update the code to test projectAllGet
-    //     //instance.projectAllGet(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
-    // describe('projectDeleteIdDelete', function () {
-    //   it('should call projectDeleteIdDelete successfully', function (done) {
-    //     //uncomment below and update the code to test projectDeleteIdDelete
-    //     //instance.projectDeleteIdDelete(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
-    // describe('projectDetailsIdGet', function () {
-    //   it('should call projectDetailsIdGet successfully', function (done) {
-    //     //uncomment below and update the code to test projectDetailsIdGet
-    //     //instance.projectDetailsIdGet(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
-    // describe('projectEditIdPut', function () {
-    //   it('should call projectEditIdPut successfully', function (done) {
-    //     //uncomment below and update the code to test projectEditIdPut
-    //     //instance.projectEditIdPut(function(error) {
-    //     //  if (error) throw error;
-    //     //expect().to.be();
-    //     //});
-    //     done();
-    //   });
-    // });
   });
-
 }));
