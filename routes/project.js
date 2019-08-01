@@ -182,6 +182,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   Project.findByIdAndUpdate(id, project)
     .then(() => {
       return res.status(200).json({
+        id,
         success: true,
         message: 'Project edited successfully!'
       })

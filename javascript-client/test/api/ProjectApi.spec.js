@@ -85,6 +85,52 @@
           })
         });
       });
+      it('Admin CRUD successfully', async function (done) {
+        const userToken = await authUtil.loginUser('admin@admin.com', 'admin');
+
+        let project = {
+          "title": "Admin Project",
+          "model": "Admin Model",
+          "year": 2010,
+          "description": "This is Admin test description",
+          "image": "string",
+          "comments": [
+            "string"
+          ]
+        };
+
+        let projectId;
+
+        instance.apiClient.authentications['Bearer'].apiKey = userToken;
+        instance.apiClient.authentications['Bearer'].apiKeyPrefix = "Bearer";
+
+        instance.addProject(project, function (error, data, res) {
+          if (error) throw error;
+          projectId = res.body.project._id;
+          instance.projectDetailsIdGet(projectId, function (error, data, res) {
+            if (error) throw error;
+            projectId = res.body.id;
+
+            let newProject = {
+              "title": "Admin Edit Project",
+              "model": "Admin Edit Model",
+              "year": 2011,
+              "description": "This is Admin test description",
+              "image": "string",
+              "comments": [
+                "string"
+              ]
+            };
+            instance.projectEditIdPut(projectId, newProject, function (error, data, res) {
+              projectId = res.body.id;
+              instance.projectDeleteIdDelete(projectId, function (error, data, res) {
+                expect(res.status).to.be(200);
+                done();
+              })
+            })
+          })
+        });
+      });
     });
   });
 }));
