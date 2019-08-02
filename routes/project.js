@@ -56,11 +56,11 @@ function decodeToken(token) {
   return payload = JSON.parse(payloadinit);
 }
 
-router.post('/create', (req, res) => {
+router.post('/create', authCheck, (req, res) => {
   const project = req.body;
-  // const token = req.headers.authorization.split(' ')[1];
-  // const decodedToken = decodeToken(token);
-  // project.creator = decodedToken.sub;
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = decodeToken(token);
+  project.creator = decodedToken.sub;
 
   const validationResult = validateProjectForm(project)
   if (!validationResult.success) {
@@ -89,7 +89,7 @@ router.get('/all', authCheck, (req, res) => {
     })
 })
 
-router.get('/details/:id',  (req, res) => {
+router.get('/details/:id', (req, res) => {
   const id = req.params.id
   Project.findById(id)
     .populate('creator')
@@ -102,7 +102,7 @@ router.get('/details/:id',  (req, res) => {
       }
 
       let response = {
-        id,
+        id: project._id,
         title: project.title,
         model: project.model,
         year: project.year,
@@ -111,7 +111,7 @@ router.get('/details/:id',  (req, res) => {
         creator: project.creator
       }
 
-      res.status(200).json(response)
+      return res.status(200).json(response)
     })
 })
 
@@ -182,6 +182,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   Project.findByIdAndUpdate(id, project)
     .then(() => {
       return res.status(200).json({
+        id,
         success: true,
         message: 'Project edited successfully!'
       })
