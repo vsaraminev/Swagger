@@ -74,7 +74,7 @@
           "description": "This is test description",
           "image": "string",
           "comments": [
-            "string"
+            "Test comment"
           ]
         };
 
@@ -100,7 +100,7 @@
           "description": "This is Admin test description",
           "image": "string",
           "comments": [
-            "string"
+            "Admin test comment"
           ]
         };
 
@@ -121,7 +121,7 @@
               "description": "This is Admin test description",
               "image": "string",
               "comments": [
-                "string"
+                "Admin edited comment"
               ]
             };
             instance.projectEditIdPut(projectId, newProject, function (error, data, res) {
