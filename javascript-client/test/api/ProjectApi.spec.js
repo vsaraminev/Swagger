@@ -18,7 +18,6 @@
 
   const jwt = require('jsonwebtoken');
   const encryption = require('../../util/encryption');
-  const bearer = 'Bearer';
 
   if (typeof define === 'function' && define.amd) {
     // AMD.
@@ -33,6 +32,7 @@
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
   const authUtil = require('../common/authentication_utils');
+  const bearer = 'Bearer';
 
   var instance;
 
@@ -57,6 +57,11 @@
       object[property] = value;
   }
 
+  function setUserToken(userToken, bearer) {
+    instance.apiClient.authentications[bearer].apiKey = userToken;
+    instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
+  }
+
   describe('ProjectApi', function () {
     describe('End to End', function () {
       it('Authenticated user add project and get details successfully', async function (done) {
@@ -73,8 +78,7 @@
           ]
         };
 
-        instance.apiClient.authentications[bearer].apiKey = userToken;
-        instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
+        setUserToken(userToken, bearer);
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
@@ -101,9 +105,7 @@
         };
 
         let projectId;
-
-        instance.apiClient.authentications[bearer].apiKey = userToken;
-        instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
+        setUserToken(userToken, bearer);
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
