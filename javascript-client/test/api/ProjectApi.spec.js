@@ -57,7 +57,7 @@
   }
 
   describe('ProjectApi', function () {
-    describe.only('End to End', function () {
+    describe('End to End', function () {
       it('Authenticated user add project and get details successfully', async function (done) {
         const userToken = await authUtil.loginUser('gosho@abv.bg', 'gosho');
 
