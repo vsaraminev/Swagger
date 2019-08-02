@@ -86,7 +86,7 @@
           })
         });
       });
-      it('Admin CRUD successfully', async function (done) {
+      it('Admin user should be able to CRUD project', async function (done) {
         const userToken = await authUtil.loginUser('admin@admin.com', 'admin');
 
         let project = {
