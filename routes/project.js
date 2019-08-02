@@ -102,6 +102,7 @@ router.get('/details/:id', (req, res) => {
       }
 
       let response = {
+        id: project._id,
         title: project.title,
         model: project.model,
         year: project.year,
