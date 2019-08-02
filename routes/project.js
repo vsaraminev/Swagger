@@ -89,7 +89,7 @@ router.get('/all', authCheck, (req, res) => {
     })
 })
 
-router.get('/details/:id',  (req, res) => {
+router.get('/details/:id', (req, res) => {
   const id = req.params.id
   Project.findById(id)
     .populate('creator')
@@ -102,7 +102,6 @@ router.get('/details/:id',  (req, res) => {
       }
 
       let response = {
-        id,
         title: project.title,
         model: project.model,
         year: project.year,
