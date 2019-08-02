@@ -18,6 +18,7 @@
 
   const jwt = require('jsonwebtoken');
   const encryption = require('../../util/encryption');
+  const bearer = 'Bearer';
 
   if (typeof define === 'function' && define.amd) {
     // AMD.
@@ -72,8 +73,8 @@
           ]
         };
 
-        instance.apiClient.authentications['Bearer'].apiKey = userToken;
-        instance.apiClient.authentications['Bearer'].apiKeyPrefix = "Bearer";
+        instance.apiClient.authentications[bearer].apiKey = userToken;
+        instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
@@ -101,8 +102,8 @@
 
         let projectId;
 
-        instance.apiClient.authentications['Bearer'].apiKey = userToken;
-        instance.apiClient.authentications['Bearer'].apiKeyPrefix = "Bearer";
+        instance.apiClient.authentications[bearer].apiKey = userToken;
+        instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
