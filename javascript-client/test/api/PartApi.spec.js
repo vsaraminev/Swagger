@@ -87,9 +87,17 @@
               instance.partDeleteIdDelete(partId, function (error, data, res) {
                 expect(res.status).to.be(200);
                 done();
-              })              
+              })
             })
           })
+        });
+      });
+      it('Authenticated user should receive error when try to create a part', async function (done) {
+        const userToken = await authUtil.loginUser('gosho@abv.bg', 'gosho');
+        await authUtil.setUserToken(instance, userToken, bearer);
+        instance.addPart(part, function (error, data, res) {
+          expect(res.status).to.be(403);
+          done();
         });
       });
     });
