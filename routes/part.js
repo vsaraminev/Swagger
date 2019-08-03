@@ -86,11 +86,11 @@ router.post('/create', authCheck, (req, res) => {
   }
 
   Part.create(part)
-    .then(() => {
+    .then((data) => {
       res.status(200).json({
         success: true,
         message: 'Part added successfully.',
-        part
+        part: data
       })
     })
 })
@@ -190,6 +190,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   Part.findByIdAndUpdate(id, part)
     .then(() => {
       return res.status(200).json({
+        id,
         success: true,
         message: 'Part edited successfully!'
       })
