@@ -57,11 +57,6 @@
       object[property] = value;
   }
 
-  function setUserToken(userToken, bearer) {
-    instance.apiClient.authentications[bearer].apiKey = userToken;
-    instance.apiClient.authentications[bearer].apiKeyPrefix = bearer;
-  }
-
   describe('ProjectApi', function () {
     describe('End to End', function () {
       it('Authenticated user add project and get details successfully', async function (done) {
@@ -78,7 +73,7 @@
           ]
         };
 
-        setUserToken(userToken, bearer);
+        await authUtil.setUserToken(instance, userToken, bearer);
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
@@ -105,7 +100,7 @@
         };
 
         let projectId;
-        setUserToken(userToken, bearer);
+        await authUtil.setUserToken(instance, userToken, bearer);
 
         instance.addProject(project, function (error, data, res) {
           if (error) throw error;
