@@ -132,7 +132,7 @@ router.delete('/delete/:id', authCheck, (req, res) => {
       }
 
       if ((project.creator.toString() != user && !userRoles.includes("Admin"))) {
-        return res.status(401).json({
+        return res.status(403).json({
           success: false,
           message: 'Unauthorized!'
         })
@@ -164,7 +164,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   const userRoles = decodedToken.role;
 
   if (!userRoles.includes('Admin')) {
-    return res.status(401).json({
+    return res.status(403).json({
       success: false,
       message: 'Unauthorized!'
     })

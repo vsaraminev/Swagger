@@ -79,7 +79,7 @@ router.post('/create', authCheck, (req, res) => {
   }
 
   if (!userRoles.includes("Admin")) {
-    return res.status(401).json({
+    return res.status(403).json({
       success: false,
       message: 'Unauthorized!'
     })
@@ -144,7 +144,7 @@ router.delete('/delete/:id', (req, res) => {
       }
 
       if (!userRoles.includes("Admin")) {
-        return res.status(401).json({
+        return res.status(403).json({
           success: false,
           message: 'Unauthorized!'
         })
@@ -172,7 +172,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   }
 
   if (!req.user.roles.includes('Admin')) {
-    return res.status(401).json({
+    return res.status(403).json({
       success: false,
       message: 'Unauthorized!'
     })
