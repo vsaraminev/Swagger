@@ -100,6 +100,16 @@
           done();
         });
       });
+      it('Unauthorized user should get list of all parts', async function (done) {
+        const userToken = '';
+
+        await authUtil.setUserToken(instance, userToken, bearer);
+
+        instance.partAllGet(function (error, data, res) {
+          expect(res.status).to.be(200);
+          done();
+        })
+      });
     });
   });
 }));
