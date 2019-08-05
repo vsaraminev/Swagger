@@ -32,13 +32,13 @@
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
   const authUtil = require('../common/authentication_utils');
-  const bearer = 'Bearer';
+  let constants = require('../common/constants');
 
   var instance;
 
   beforeEach(function () {
     instance = new SwaggerTunningPlace.ProjectApi();
-    instance.apiClient.basePath = 'http://localhost:5000';
+    instance.apiClient.basePath = constants.basePath;
   });
 
   var getProperty = function (object, getter, property) {
@@ -60,22 +60,11 @@
   describe('ProjectApi', function () {
     describe('End to End', function () {
       it('Authenticated user add project and get details successfully', async function (done) {
-        const userToken = await authUtil.loginUser('gosho@abv.bg', 'gosho');
+        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
 
-        let project = {
-          "title": "test Project",
-          "model": "test Model",
-          "year": 2018,
-          "description": "This is test description",
-          "image": "string",
-          "comments": [
-            "Test comment"
-          ]
-        };
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        await authUtil.setUserToken(instance, userToken, bearer);
-
-        instance.addProject(project, function (error, data, res) {
+        instance.addProject(constants.project, function (error, data, res) {
           if (error) throw error;
           let projectId = res.body.project._id;
           instance.projectDetailsIdGet(projectId, function (error, data, res) {
@@ -86,40 +75,19 @@
         });
       });
       it('Admin user should be able to CRUD project', async function (done) {
-        const userToken = await authUtil.loginUser('admin@admin.com', 'admin');
-
-        let project = {
-          "title": "Admin Project",
-          "model": "Admin Model",
-          "year": 2010,
-          "description": "This is Admin test description",
-          "image": "string",
-          "comments": [
-            "Admin test comment"
-          ]
-        };
+        const userToken = await authUtil.loginUser(constants.adminUser.email, constants.adminUser.password);
 
         let projectId;
-        await authUtil.setUserToken(instance, userToken, bearer);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.addProject(project, function (error, data, res) {
+        instance.addProject(constants.adminProject, function (error, data, res) {
           if (error) throw error;
           projectId = res.body.project._id;
           instance.projectDetailsIdGet(projectId, function (error, data, res) {
             if (error) throw error;
             projectId = res.body.id;
 
-            let newProject = {
-              "title": "Admin Edit Project",
-              "model": "Admin Edit Model",
-              "year": 2011,
-              "description": "This is Admin test description",
-              "image": "string",
-              "comments": [
-                "Admin edited comment"
-              ]
-            };
-            instance.projectEditIdPut(projectId, newProject, function (error, data, res) {
+            instance.projectEditIdPut(projectId, constants.newAdminProject, function (error, data, res) {
               projectId = res.body.id;
               instance.projectDeleteIdDelete(projectId, function (error, data, res) {
                 expect(res.status).to.be(200);

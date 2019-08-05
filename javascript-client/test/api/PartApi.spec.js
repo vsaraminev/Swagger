@@ -26,32 +26,16 @@
   }
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
-  const part = {
-    "title": "Admin part title",
-    "model": "Admin part model",
-    "year": 2000,
-    "description": "Admin part description",
     "price": 10,
-    "image": "Admin part image"
-  };
-
-  const newPart = {
-    "model": "Admin part model",
-    "title": "Admin part title",
-    "description": "Admin part description",
-    "year": 2000,
-    "image": "Admin part image",
-    "price": 10,
-  };
 
   const authUtil = require('../common/authentication_utils');
-  const bearer = 'Bearer';
+  let constants = require('../common/constants');
   let partId;
   var instance;
 
   beforeEach(function () {
     instance = new SwaggerTunningPlace.PartApi();
-    instance.apiClient.basePath = 'http://localhost:5000';
+    instance.apiClient.basePath = constants.basePath;
   });
 
   var getProperty = function (object, getter, property) {
@@ -73,16 +57,16 @@
   describe('PartApi', function () {
     describe('End to End', function () {
       it('Admin user should be able to CRUD part', async function (done) {
-        const userToken = await authUtil.loginUser('admin@admin.com', 'admin');
+        const userToken = await authUtil.loginUser(constants.adminUser.email, constants.adminUser.password);
 
-        await authUtil.setUserToken(instance, userToken, bearer);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.addPart(part, function (error, data, res) {
+        instance.addPart(constants.part, function (error, data, res) {
           if (error) throw error;
           partId = res.body.part._id;
           instance.partDetailsIdGet(partId, function (error, data, res) {
             partId = res.body.id;
-            instance.partEditIdPut(partId, newPart, function (error, data, res) {
+            instance.partEditIdPut(partId, constants.newPart, function (error, data, res) {
               partId = res.body.id;
               instance.partDeleteIdDelete(partId, function (error, data, res) {
                 expect(res.status).to.be(200);
@@ -93,9 +77,9 @@
         });
       });
       it('Authenticated user should receive error when try to create a part', async function (done) {
-        const userToken = await authUtil.loginUser('gosho@abv.bg', 'gosho');
-        await authUtil.setUserToken(instance, userToken, bearer);
-        instance.addPart(part, function (error, data, res) {
+        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+        instance.addPart(constants.part, function (error, data, res) {
           expect(res.status).to.be(403);
           done();
         });
@@ -103,7 +87,7 @@
       it('Unauthorized user should get list of all parts', async function (done) {
         const userToken = '';
 
-        await authUtil.setUserToken(instance, userToken, bearer);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
         instance.partAllGet(function (error, data, res) {
           expect(res.status).to.be(200);
