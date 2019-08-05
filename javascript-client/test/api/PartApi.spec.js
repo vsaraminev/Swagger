@@ -26,10 +26,9 @@
   }
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
-    "price": 10,
 
   const authUtil = require('../common/authentication_utils');
-  let constants = require('../common/constants');
+  let constants = require('../../../util/constants');
   let partId;
   var instance;
 

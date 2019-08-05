@@ -32,7 +32,7 @@
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
   const authUtil = require('../common/authentication_utils');
-  let constants = require('../common/constants');
+  let constants = require('../../../util/constants');
 
   var instance;
 
