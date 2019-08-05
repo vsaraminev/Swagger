@@ -75,7 +75,7 @@
           })
         });
       });
-      it('Authenticated user should receive error when try to create a part', async function (done) {
+      it('Non admin user should receive error when try to create a part', async function (done) {
         const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
         instance.addPart(constants.part, function (error, data, res) {

@@ -59,7 +59,7 @@
 
   describe('ProjectApi', function () {
     describe('End to End', function () {
-      it('Authenticated user add project and get details successfully', async function (done) {
+      it('Non admin user add project and get details successfully', async function (done) {
         const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
 
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
