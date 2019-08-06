@@ -1,6 +1,7 @@
 const express = require('express')
 const authCheck = require('../middleware/auth-check');
 const Project = require('../models/Project');
+const constants = require('../util/constants');
 
 const router = new express.Router()
 
@@ -13,31 +14,31 @@ function validateProjectForm(payload) {
 
   if (!payload || typeof payload.title !== 'string' || payload.title.length < 3) {
     isFormValid = false
-    errors.title = 'Title must be more than 3 symbols.'
+    errors.title = constants.validateProjectForm.title
   }
 
   if (!payload || typeof payload.model !== 'string' || payload.model.length < 3) {
     isFormValid = false
-    errors.model = 'Model must be more than 3 symbols.'
+    errors.model = constants.validateProjectForm.model
   }
 
   if (!payload || !payload.year || payload.year < 1920 || payload.year > 2019) {
     isFormValid = false
-    errors.year = 'Year must be between 1920 and 2019.'
+    errors.year = constants.validateProjectForm.year
   }
 
   if (!payload || typeof payload.description !== 'string' || payload.description.length < 10) {
     isFormValid = false
-    errors.description = 'Description must be more than 10 symbols.'
+    errors.description = constants.validateProjectForm.description
   }
 
   if (!payload || typeof payload.image !== 'string' || payload.image.length === 0) {
     isFormValid = false
-    errors.image = 'Image URL is required.'
+    errors.image = constants.validateProjectForm.image
   }
 
   if (!isFormValid) {
-    message = 'Check the form for errors.'
+    message = constants.formErrors
   }
 
   return {
@@ -75,7 +76,7 @@ router.post('/create', authCheck, (req, res) => {
     .then((data) => {
       res.status(200).json({
         success: true,
-        message: 'Project added successfully.',
+        message: constants.projectMess.add,
         project: data
       })
     })
@@ -97,7 +98,7 @@ router.get('/details/:id', (req, res) => {
       if (!project) {
         return res.status(404).json({
           success: false,
-          message: 'Entry does not exists!'
+          message: constants.projectMess.notExists
         })
       }
 
@@ -127,14 +128,14 @@ router.delete('/delete/:id', authCheck, (req, res) => {
       if (!project) {
         return res.status(200).json({
           success: false,
-          message: 'Project does not exists!'
+          message: constants.projectMess.notExists
         })
       }
 
-      if ((project.creator.toString() != user && !userRoles.includes("Admin"))) {
-        return res.status(401).json({
+      if ((project.creator.toString() != user && !userRoles.includes(constants.adminRole))) {
+        return res.status(403).json({
           success: false,
-          message: 'Unauthorized!'
+          message: constants.unAuthorized
         })
       }
 
@@ -142,7 +143,7 @@ router.delete('/delete/:id', authCheck, (req, res) => {
         .then(() => {
           return res.status(200).json({
             success: true,
-            message: 'Project deleted successfully!'
+            message: constants.projectMess.deleted
           })
         })
     })
@@ -155,7 +156,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
   if (!project) {
     return res.status(404).json({
       success: false,
-      message: 'Project does not exists!'
+      message: constants.projectMess.notExists
     })
   }
 
@@ -163,10 +164,10 @@ router.put('/edit/:id', authCheck, (req, res) => {
   const decodedToken = decodeToken(token);
   const userRoles = decodedToken.role;
 
-  if (!userRoles.includes('Admin')) {
-    return res.status(401).json({
+  if (!userRoles.includes(constants.adminRole)) {
+    return res.status(403).json({
       success: false,
-      message: 'Unauthorized!'
+      message: constants.unAuthorized
     })
   }
 
@@ -184,7 +185,7 @@ router.put('/edit/:id', authCheck, (req, res) => {
       return res.status(200).json({
         id,
         success: true,
-        message: 'Project edited successfully!'
+        message: constants.projectMess.edited
       })
     })
 })

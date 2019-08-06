@@ -2,6 +2,7 @@ const express = require('express')
 const authCheck = require('../middleware/auth-check');
 const Project = require('../models/Project')
 const Comment = require('../models/Comment')
+const constants = require('../util/constants')
 
 const router = new express.Router()
 
@@ -13,27 +14,27 @@ function validateCommentForm(payload) {
 
     if (!payload || typeof payload.content !== 'string' || payload.content.length < 3 || payload.content.length > 200) {
         isFormValid = false
-        errors.content = 'Content must be at least 3 symbols and less than 200 symbols.'
+        errors.content = constants.validateCommForm.content
     }
 
     if (!payload || !payload.creatorName || typeof payload.creatorName !== 'string') {
         isFormValid = false
-        errors.creatorName = 'Invalid creatorName.'
+        errors.creatorName = constants.validateCommForm.creatorName
     }
 
     if (!payload || !payload.creatorId || typeof payload.creatorId !== 'string') {
         isFormValid = false
-        errors.creatorId = 'Invalid creatorId.'
+        errors.creatorId = constants.validateCommForm.creatorId
     }
 
     if (!payload || !payload.projectId || typeof payload.projectId !== 'string') {
         isFormValid = false
-        errors.projectId = 'Invalid projectId.'
+        errors.projectId = constants.validateCommForm.projectId
     }
 
 
     if (!isFormValid) {
-        message = 'Check the form for errors.'
+        message = constants.formErrors
     }
 
     return {
@@ -46,13 +47,13 @@ function validateCommentForm(payload) {
 router.post('/create', authCheck, async (req, res) => {
     const commentObj = req.body;
     commentObj.creatorId = req.user.id;
-    if (req.user.roles.indexOf('User') > -1) {
+    if (req.user.roles.indexOf(constants.userRole) > -1) {
         const validationResult = validateCommentForm(commentObj)
         var user = req.user;
         if (!user) {
             return res.status(200).json({
                 success: false,
-                message: "There is no user with these credentials"
+                message: constants.noUserWithTheseCred
             })
         }
         if (!validationResult.success) {
@@ -72,7 +73,7 @@ router.post('/create', authCheck, async (req, res) => {
             .then(async (createdComment) => {
                 res.status(200).json({
                     success: true,
-                    message: 'Comment added successfully.',
+                    message: constants.commentMess.add,
                     data: createdComment
                 })
                 await projectCommented.comments.push(createdComment.id);
@@ -80,9 +81,9 @@ router.post('/create', authCheck, async (req, res) => {
             })
             .catch((err) => {
                 console.log(err)
-                let message = 'Something went wrong :( Check the form for errors.'
+                let message = constants.formErrors
                 if (err.code === 11000) {
-                    message = 'Post with the given name already exists.'
+                    message = constants.commentMess.exists
                 }
                 return res.status(200).json({
                     success: false,
@@ -92,7 +93,7 @@ router.post('/create', authCheck, async (req, res) => {
     } else {
         return res.status(200).json({
             success: false,
-            message: 'Invalid credentials!'
+            message: constants.invalidCredentials
         })
     }
 })
@@ -106,7 +107,7 @@ router.get('/allByProject/:id', (req, res) => {
         })
         .catch((err) => {
             console.log(err)
-            const message = 'Something went wrong :('
+            const message = constants.somethingWentWrong
             return res.status(200).json({
                 success: false,
                 message: message
@@ -122,14 +123,14 @@ router.delete('/delete/:id', authCheck, (req, res) => {
             if (!comment) {
                 return res.status(200).json({
                     success: false,
-                    message: 'Comment does not exists!'
+                    message: constants.commentMess.notExists
                 })
             }
 
-            if ((comment.creatorId.toString() != user && !req.user.roles.includes("Admin"))) {
+            if ((comment.creatorId.toString() != user && !req.user.roles.includes(constants.adminRole))) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Unauthorized!'
+                    message: constants.unAuthorized
                 })
             }
 
@@ -137,7 +138,7 @@ router.delete('/delete/:id', authCheck, (req, res) => {
                 .then(() => {
                     return res.status(200).json({
                         success: true,
-                        message: 'Comment deleted successfully!'
+                        message: constants.commentMess.delete
                     })
                 })
         })

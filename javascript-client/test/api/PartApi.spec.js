@@ -13,7 +13,7 @@
  *
  */
 
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -24,16 +24,20 @@
     // Browser globals (root is window)
     factory(root.expect, root.SwaggerTunningPlace);
   }
-}(this, function(expect, SwaggerTunningPlace) {
+}(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
+  const authUtil = require('../common/authentication_utils');
+  let constants = require('../../../util/constants');
+  let partId;
   var instance;
 
-  beforeEach(function() {
+  beforeEach(function () {
     instance = new SwaggerTunningPlace.PartApi();
+    instance.apiClient.basePath = constants.basePath;
   });
 
-  var getProperty = function(object, getter, property) {
+  var getProperty = function (object, getter, property) {
     // Use getter method if present; otherwise, get the property directly.
     if (typeof object[getter] === 'function')
       return object[getter]();
@@ -41,7 +45,7 @@
       return object[property];
   }
 
-  var setProperty = function(object, setter, property, value) {
+  var setProperty = function (object, setter, property, value) {
     // Use setter method if present; otherwise, set the property directly.
     if (typeof object[setter] === 'function')
       object[setter](value);
@@ -49,58 +53,46 @@
       object[property] = value;
   }
 
-  describe('PartApi', function() {
-    describe('addPart', function() {
-      it('should call addPart successfully', function(done) {
-        
-        //uncomment below and update the code to test addPart
-        //instance.addPart(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+  describe('PartApi', function () {
+    describe('End to End', function () {
+      it('Admin user should be able to CRUD part', async function (done) {
+        const userToken = await authUtil.loginUser(constants.adminUser.email, constants.adminUser.password);
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.addPart(constants.part, function (error, data, res) {
+          if (error) throw error;
+          partId = res.body.part._id;
+          instance.partDetailsIdGet(partId, function (error, data, res) {
+            partId = res.body.id;
+            instance.partEditIdPut(partId, constants.newPart, function (error, data, res) {
+              partId = res.body.id;
+              instance.partDeleteIdDelete(partId, function (error, data, res) {
+                expect(res.status).to.be(200);
+                done();
+              })
+            })
+          })
+        });
       });
-    });
-    describe('partAllGet', function() {
-      it('should call partAllGet successfully', function(done) {
-        //uncomment below and update the code to test partAllGet
-        //instance.partAllGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+      it('Non admin user should receive error when try to create a part', async function (done) {
+        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+        instance.addPart(constants.part, function (error, data, res) {
+          expect(res.status).to.be(403);
+          done();
+        });
       });
-    });
-    describe('partDeleteIdDelete', function() {
-      it('should call partDeleteIdDelete successfully', function(done) {
-        //uncomment below and update the code to test partDeleteIdDelete
-        //instance.partDeleteIdDelete(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('partDetailsIdGet', function() {
-      it('should call partDetailsIdGet successfully', function(done) {
-        //uncomment below and update the code to test partDetailsIdGet
-        //instance.partDetailsIdGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
-      });
-    });
-    describe('partEditIdPut', function() {
-      it('should call partEditIdPut successfully', function(done) {
-        //uncomment below and update the code to test partEditIdPut
-        //instance.partEditIdPut(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+      it('Unauthorized user should get list of all parts', async function (done) {
+        const userToken = '';
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.partAllGet(function (error, data, res) {
+          expect(res.status).to.be(200);
+          done();
+        })
       });
     });
   });
-
 }));

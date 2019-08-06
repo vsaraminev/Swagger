@@ -1,6 +1,7 @@
 const express = require('express')
 const authCheck = require('../middleware/auth-check');
 const Part = require('../models/Part');
+const constants = require('../util/constants');
 
 const router = new express.Router()
 
@@ -19,31 +20,31 @@ function validatePartForm(payload) {
 
   if (!payload || typeof payload.model !== 'string' || payload.model.length < 3) {
     isFormValid = false
-    errors.model = 'Model must be more than 3 symbols.'
+    errors.model = constants.validatePartForm.model
   }
 
   if (!payload || !payload.year || payload.year < 1950 || payload.year > 2050) {
     isFormValid = false
-    errors.year = 'Year must be between 1920 and 2019.'
+    errors.year = constants.validatePartForm.year
   }
 
   if (!payload || typeof payload.description !== 'string' || payload.description.length < 10) {
     isFormValid = false
-    errors.description = 'Description must be more than 10 symbols.'
+    errors.description = constants.validatePartForm.description
   }
 
   if (!payload || !payload.price || payload.price < 0) {
     isFormValid = false
-    errors.price = 'Price must be a positive number.'
+    errors.price = constants.validatePartForm.price
   }
 
   if (!payload || typeof payload.image !== 'string' || payload.image.length === 0) {
     isFormValid = false
-    errors.image = 'Image URL is required.'
+    errors.image = constants.validatePartForm.image
   }
 
   if (!isFormValid) {
-    message = 'Check the form for errors.'
+    message = constants.formErrors
   }
 
   return {
@@ -78,19 +79,19 @@ router.post('/create', authCheck, (req, res) => {
     })
   }
 
-  if (!userRoles.includes("Admin")) {
-    return res.status(401).json({
+  if (!userRoles.includes(constants.adminRole)) {
+    return res.status(403).json({
       success: false,
-      message: 'Unauthorized!'
+      message: constants.unAuthorized
     })
   }
 
   Part.create(part)
-    .then(() => {
+    .then((data) => {
       res.status(200).json({
         success: true,
         message: 'Part added successfully.',
-        part
+        part: data
       })
     })
 })
@@ -109,7 +110,7 @@ router.get('/details/:id', authCheck, (req, res) => {
       if (!part) {
         return res.status(404).json({
           success: false,
-          message: 'Entry does not exists!'
+          message: constants.partMess.notExists
         })
       }
 
@@ -139,14 +140,14 @@ router.delete('/delete/:id', (req, res) => {
       if (!part) {
         return res.status(200).json({
           success: false,
-          message: 'Part does not exists!'
+          message: constants.partMess.notExists
         })
       }
 
-      if (!userRoles.includes("Admin")) {
-        return res.status(401).json({
+      if (!userRoles.includes(constants.adminRole)) {
+        return res.status(403).json({
           success: false,
-          message: 'Unauthorized!'
+          message: constants.unAuthorized
         })
       }
 
@@ -154,7 +155,7 @@ router.delete('/delete/:id', (req, res) => {
         .then(() => {
           return res.status(200).json({
             success: true,
-            message: 'Part deleted successfully!'
+            message: constants.partMess.deleted
           })
         })
     })
@@ -167,14 +168,14 @@ router.put('/edit/:id', authCheck, (req, res) => {
   if (!part) {
     return res.status(404).json({
       success: false,
-      message: 'Part does not exists!'
+      message: constants.partMess.notExists
     })
   }
 
-  if (!req.user.roles.includes('Admin')) {
-    return res.status(401).json({
+  if (!req.user.roles.includes(constants.adminRole)) {
+    return res.status(403).json({
       success: false,
-      message: 'Unauthorized!'
+      message: constants.unAuthorized
     })
   }
 
@@ -190,8 +191,9 @@ router.put('/edit/:id', authCheck, (req, res) => {
   Part.findByIdAndUpdate(id, part)
     .then(() => {
       return res.status(200).json({
+        id,
         success: true,
-        message: 'Part edited successfully!'
+        message: constants.partMess.edit
       })
     })
 })

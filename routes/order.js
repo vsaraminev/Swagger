@@ -1,6 +1,7 @@
 const express = require('express')
 const authCheck = require('../middleware/auth-check');
 const Order = require('../models/Order');
+const constants = require('../util/constants');
 
 const router = new express.Router()
 
@@ -26,7 +27,7 @@ router.post('/add/:partId', authCheck, async (req, res) => {
         .then(() => {
             res.status(200).json({
                 success: true,
-                message: 'Part added successfully to cart.'
+                message: constants.orderMess.add
             })
         })
 })
