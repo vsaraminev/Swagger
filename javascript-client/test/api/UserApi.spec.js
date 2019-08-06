@@ -13,7 +13,7 @@
  *
  */
 
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -24,16 +24,18 @@
     // Browser globals (root is window)
     factory(root.expect, root.SwaggerTunningPlace);
   }
-}(this, function(expect, SwaggerTunningPlace) {
+}(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
   var instance;
+  const authUtil = require('../common/authentication_utils');
+  const constants = require('../../../util/constants');
 
-  beforeEach(function() {
+  beforeEach(function () {
     instance = new SwaggerTunningPlace.UserApi();
   });
 
-  var getProperty = function(object, getter, property) {
+  var getProperty = function (object, getter, property) {
     // Use getter method if present; otherwise, get the property directly.
     if (typeof object[getter] === 'function')
       return object[getter]();
@@ -41,7 +43,7 @@
       return object[property];
   }
 
-  var setProperty = function(object, setter, property, value) {
+  var setProperty = function (object, setter, property, value) {
     // Use setter method if present; otherwise, set the property directly.
     if (typeof object[setter] === 'function')
       object[setter](value);
@@ -49,17 +51,17 @@
       object[property] = value;
   }
 
-  describe('UserApi', function() {
-    describe('userInfoGet', function() {
-      it('should call userInfoGet successfully', function(done) {
-        //uncomment below and update the code to test userInfoGet
-        //instance.userInfoGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+  describe('UserApi', function () {
+    describe('End to End', function () {
+      it('Non admin User should call userInfoGet successfully', async function (done) {
+        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.userInfoGet(function (error, data, res) {
+          expect(res.status).to.be(200);
+          done();
+        });
       });
     });
-  });
-
+  })
 }));
