@@ -61,6 +61,15 @@
           expect(res.status).to.be(200);
           done();
         });
+      });      
+      it('Non loggedIn user should receive error when call userInfoGet', async function (done) {
+        const userToken = '';
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.userInfoGet(function (error, data, res) {
+          expect(res.status).to.be(401);
+          done();
+        });
       });
     });
   })
