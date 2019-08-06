@@ -66,6 +66,17 @@
           });
         });
       });
+      
+      it('Non loggedIn user should receive error when try to list all orders', async function (done) {
+        const userToken = '';
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.orderUserGet(function (error, data, res) {
+          expect(res.status).to.be(401);
+          done();
+        });
+      });
     });
   });
 }));
