@@ -28,6 +28,8 @@
   'use strict';
 
   var instance;
+  const authUtil = require('../common/authentication_utils');
+  const constants = require('../../../util/constants');
 
   beforeEach(function() {
     instance = new SwaggerTunningPlace.OrderApi();
@@ -49,27 +51,32 @@
       object[property] = value;
   }
 
-  describe('OrderApi', function() {
-    describe('orderAddPartIdPost', function() {
-      it('should call orderAddPartIdPost successfully', function(done) {
-        //uncomment below and update the code to test orderAddPartIdPost
-        //instance.orderAddPartIdPost(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+  describe('OrderApi', function () {
+    describe('End to End', function () {
+      it('Non admin user should add order to cart and list all orders', async function (done) {
+        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.orderAddPartIdPost(constants.partId, function (error, data, res) {
+          if (error) throw error;
+          instance.orderUserGet(function (error, data, res) {
+            expect(res.status).to.be(200);
+            done();
+          });
+        });
       });
-    });
-    describe('orderUserGet', function() {
-      it('should call orderUserGet successfully', function(done) {
-        //uncomment below and update the code to test orderUserGet
-        //instance.orderUserGet(function(error) {
-        //  if (error) throw error;
-        //expect().to.be();
-        //});
-        done();
+      
+      it('Non loggedIn user should receive error when try to list all orders', async function (done) {
+        const userToken = '';
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.orderUserGet(function (error, data, res) {
+          expect(res.status).to.be(401);
+          done();
+        });
       });
     });
   });
-
 }));

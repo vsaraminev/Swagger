@@ -65,6 +65,8 @@ const newAdminProject = {
     ]
 };
 
+const partId = '5cbc45ba9a2ce649503569eb';
+
 const successSignedUp = 'You have successfully signed up! Now you should be able to log in.';
 
 const incorrectCredentialsError = 'IncorrectCredentialsError';
@@ -143,7 +145,7 @@ module.exports = {
     userRole,
     adminUser,
     nonAdminUser,
-    part,
+    part,    
     newPart,
     project,
     adminProject,
@@ -164,5 +166,6 @@ module.exports = {
     partMess,
     validatePartForm,
     validateProjectForm,
-    projectMess
+    projectMess,
+    partId
 }
