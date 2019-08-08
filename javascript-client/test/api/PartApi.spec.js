@@ -56,8 +56,7 @@
   describe('PartApi', function () {
     describe('End to End', function () {
       it('Admin user should be able to CRUD part', async function (done) {
-        const userToken = await authUtil.loginUser(constants.adminUser.email, constants.adminUser.password);
-
+        const userToken = await authUtil.loginUserObj(constants.adminUser);
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
         instance.addPart(constants.part, function (error, data, res) {
@@ -76,7 +75,7 @@
         });
       });
       it('Non admin user should receive error when try to create a part', async function (done) {
-        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
         instance.addPart(constants.part, function (error, data, res) {
           expect(res.status).to.be(403);

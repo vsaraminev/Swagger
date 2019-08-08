@@ -54,7 +54,7 @@
   describe('UserApi', function () {
     describe('End to End', function () {
       it('Non admin User should call userInfoGet successfully', async function (done) {
-        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
         instance.userInfoGet(function (error, data, res) {

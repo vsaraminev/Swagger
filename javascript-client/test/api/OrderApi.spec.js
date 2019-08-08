@@ -55,8 +55,7 @@
   describe('OrderApi', function () {
     describe('End to End', function () {
       it('Non admin user should add order to cart and list all orders', async function (done) {
-        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
-
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser)
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
         instance.orderAddPartIdPost(constants.partId, function (error, data, res) {
