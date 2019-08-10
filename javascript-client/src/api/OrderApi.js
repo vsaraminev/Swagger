@@ -95,6 +95,53 @@
     }
 
     /**
+     * Callback function to receive the result of the orderDetailsIdGet operation.
+     * @callback module:api/OrderApi~orderDetailsIdGetCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/Order} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Returns a single order
+     * @param {String} id ID of order to return
+     * @param {module:api/OrderApi~orderDetailsIdGetCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/Order}
+     */
+    this.orderDetailsIdGet = function(id, callback) {
+      var postBody = null;
+
+      // verify the required parameter 'id' is set
+      if (id === undefined || id === null) {
+        throw new Error("Missing the required parameter 'id' when calling orderDetailsIdGet");
+      }
+
+
+      var pathParams = {
+        'id': id
+      };
+      var queryParams = {
+      };
+      var collectionQueryParams = {
+      };
+      var headerParams = {
+      };
+      var formParams = {
+      };
+
+      var authNames = ['Bearer'];
+      var contentTypes = ['application/json'];
+      var accepts = ['application/json'];
+      var returnType = Order;
+
+      return this.apiClient.callApi(
+        '/order/details/{id}', 'GET',
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the orderUserGet operation.
      * @callback module:api/OrderApi~orderUserGetCallback
      * @param {String} error Error message, if any.

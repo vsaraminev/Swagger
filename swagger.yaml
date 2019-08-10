@@ -246,6 +246,28 @@ paths:
             $ref: "#/definitions/Order"
         '400':
           description: Invalid value
+  /order/details/{id}:
+    get:
+      tags:
+        - "order"
+      description: "Returns a single order"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of order to return"
+        required: true
+        type: "string"
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Order"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Order not found"
   /user/info:
     get:
       tags:

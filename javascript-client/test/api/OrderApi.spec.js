@@ -13,7 +13,7 @@
  *
  */
 
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -24,18 +24,19 @@
     // Browser globals (root is window)
     factory(root.expect, root.SwaggerTunningPlace);
   }
-}(this, function(expect, SwaggerTunningPlace) {
+}(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
   var instance;
+  let orderId;
   const authUtil = require('../common/authentication_utils');
   const constants = require('../../../util/constants');
 
-  beforeEach(function() {
+  beforeEach(function () {
     instance = new SwaggerTunningPlace.OrderApi();
   });
 
-  var getProperty = function(object, getter, property) {
+  var getProperty = function (object, getter, property) {
     // Use getter method if present; otherwise, get the property directly.
     if (typeof object[getter] === 'function')
       return object[getter]();
@@ -43,7 +44,7 @@
       return object[property];
   }
 
-  var setProperty = function(object, setter, property, value) {
+  var setProperty = function (object, setter, property, value) {
     // Use setter method if present; otherwise, set the property directly.
     if (typeof object[setter] === 'function')
       object[setter](value);
@@ -54,19 +55,20 @@
   describe('OrderApi', function () {
     describe('End to End', function () {
       it('Non admin user should add order to cart and list all orders', async function (done) {
-        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
-
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser)
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
         instance.orderAddPartIdPost(constants.partId, function (error, data, res) {
           if (error) throw error;
-          instance.orderUserGet(function (error, data, res) {
-            expect(res.status).to.be(200);
-            done();
+          orderId = res.body.id;
+          instance.orderDetailsIdGet(orderId, function (error, data, res) {
+            instance.orderUserGet(function (error, data, res) {
+              expect(res.status).to.be(200);
+              done();
+            });
           });
         });
       });
-      
       it('Non loggedIn user should receive error when try to list all orders', async function (done) {
         const userToken = '';
 

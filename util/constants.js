@@ -91,7 +91,8 @@ const commentMess = {
 }
 
 const orderMess = {
-    'add': 'Part added successfully to cart.'
+    'add': 'Part added successfully to cart.',    
+    'notExists': 'Order does not exists!'
 };
 
 const projectMess = {

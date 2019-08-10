@@ -60,7 +60,7 @@
   describe('ProjectApi', function () {
     describe('End to End', function () {
       it('Non admin user add project and get details successfully', async function (done) {
-        const userToken = await authUtil.loginUser(constants.nonAdminUser.email, constants.nonAdminUser.password);
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
 
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
@@ -75,7 +75,7 @@
         });
       });
       it('Admin user should be able to CRUD project', async function (done) {
-        const userToken = await authUtil.loginUser(constants.adminUser.email, constants.adminUser.password);
+        const userToken = await authUtil.loginUserObj(constants.adminUser);
 
         let projectId;
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);

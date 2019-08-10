@@ -24,8 +24,9 @@ router.post('/add/:partId', authCheck, async (req, res) => {
         buyer: userId,
         part: partId
     })
-        .then(() => {
+        .then((order) => {
             res.status(200).json({
+                id: order._id,
                 success: true,
                 message: constants.orderMess.add
             })
@@ -41,6 +42,27 @@ router.get('/user', authCheck, async (req, res) => {
         .populate('part')
         .then((data) => {
             return res.status(200).json(data)
+        })
+})
+
+router.get('/details/:id', (req, res) => {
+    const id = req.params.id
+    Order.findById(id)
+        .then((order) => {
+            if (!order) {
+                return res.status(404).json({
+                    success: false,
+                    message: constants.orderMess.notExists
+                })
+            }
+
+            let response = {
+                id: order._id,
+                buyer: order.buyer,
+                part: order.part
+            }
+
+            return res.status(200).json(response)
         })
 })
 
