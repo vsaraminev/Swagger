@@ -1,14 +1,17 @@
 version: '3'
 services: 
   app:
-    build: .
+    image: tunning-system:v01
     environment: 
       DB_PATH: mongodb://mongo:27017/tuning-system
     ports: 
       - '5000:5000'
-
+    depends_on:
+      - mongo  
   mongo:
     container_name: mongo
     image: mongo
     ports: 
       - '27017:27017'
+    volumes: 
+      - ./docker-mongo/init-test-data/import.js:/docker-entrypoint-initdb.d/import.js

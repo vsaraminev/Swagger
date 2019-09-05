@@ -13,7 +13,11 @@
  *
  */
 
+
 (function (root, factory) {
+
+  const jwt = require('jsonwebtoken');
+
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -26,14 +30,14 @@
   }
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
+  const authUtil = require('../common/authentication_utils');
+  let constants = require('../common/constants');
 
   var instance;
-  let orderId;
-  const authUtil = require('../common/authentication_utils');
-  const constants = require('../../../util/constants');
 
   beforeEach(function () {
-    instance = new SwaggerTunningPlace.OrderApi();
+    instance = new SwaggerTunningPlace.ProjectApi();
+    instance.apiClient.basePath = constants.basePath;
   });
 
   var getProperty = function (object, getter, property) {
@@ -52,31 +56,44 @@
       object[property] = value;
   }
 
-  describe('OrderApi', function () {
+  describe('ProjectApi', function () {
     describe('End to End', function () {
-      it('Non admin user should add order to cart and list all orders', async function (done) {
-        const userToken = await authUtil.loginUserObj(constants.nonAdminUser)
+      it('Non admin user add project and get details successfully', async function (done) {
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
+
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.orderAddPartIdPost(constants.partId, function (error, data, res) {
+        instance.addProject(constants.project, function (error, data, res) {
           if (error) throw error;
-          orderId = res.body.id;
-          instance.orderDetailsIdGet(orderId, function (error, data, res) {
-            instance.orderUserGet(function (error, data, res) {
-              expect(res.status).to.be(200);
-              done();
-            });
-          });
+          let projectId = res.body.project._id;
+          instance.projectDetailsIdGet(projectId, function (error, data, res) {
+            if (error) throw error;
+            expect(res.status).to.be(200);
+            done();
+          })
         });
       });
-      it('Non loggedIn user should receive error when try to list all orders', async function (done) {
-        const userToken = '';
+      it('Admin user should be able to CRUD project', async function (done) {
+        const userToken = await authUtil.loginUserObj(constants.adminUser);
 
+        let projectId;
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.orderUserGet(function (error, data, res) {
-          expect(res.status).to.be(401);
-          done();
+        instance.addProject(constants.adminProject, function (error, data, res) {
+          if (error) throw error;
+          projectId = res.body.project._id;
+          instance.projectDetailsIdGet(projectId, function (error, data, res) {
+            if (error) throw error;
+            projectId = res.body.id;
+
+            instance.projectEditIdPut(projectId, constants.newAdminProject, function (error, data, res) {
+              projectId = res.body.id;
+              instance.projectDeleteIdDelete(projectId, function (error, data, res) {
+                expect(res.status).to.be(200);
+                done();
+              })
+            })
+          })
         });
       });
     });

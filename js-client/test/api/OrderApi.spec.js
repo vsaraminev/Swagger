@@ -27,14 +27,13 @@
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
 
-  const authUtil = require('../common/authentication_utils');
-  let constants = require('../../../util/constants');
-  let partId;
   var instance;
+  let orderId;
+  const authUtil = require('../common/authentication_utils');
+  const constants = require('../common/constants');
 
   beforeEach(function () {
-    instance = new SwaggerTunningPlace.PartApi();
-    instance.apiClient.basePath = constants.basePath;
+    instance = new SwaggerTunningPlace.OrderApi();
   });
 
   var getProperty = function (object, getter, property) {
@@ -53,44 +52,32 @@
       object[property] = value;
   }
 
-  describe('PartApi', function () {
+  describe('OrderApi', function () {
     describe('End to End', function () {
-      it('Admin user should be able to CRUD part', async function (done) {
-        const userToken = await authUtil.loginUserObj(constants.adminUser);
+      it('Non admin user should add order to cart and list all orders', async function (done) {
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser)
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.addPart(constants.part, function (error, data, res) {
+        instance.orderAddPartIdPost(constants.partId, function (error, data, res) {
           if (error) throw error;
-          partId = res.body.part._id;
-          instance.partDetailsIdGet(partId, function (error, data, res) {
-            partId = res.body.id;
-            instance.partEditIdPut(partId, constants.newPart, function (error, data, res) {
-              partId = res.body.id;
-              instance.partDeleteIdDelete(partId, function (error, data, res) {
-                expect(res.status).to.be(200);
-                done();
-              })
-            })
-          })
+          orderId = res.body.id;
+          instance.orderDetailsIdGet(orderId, function (error, data, res) {
+            instance.orderUserGet(function (error, data, res) {
+              expect(res.status).to.be(200);
+              done();
+            });
+          });
         });
       });
-      it('Non admin user should receive error when try to create a part', async function (done) {
-        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
-        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
-        instance.addPart(constants.part, function (error, data, res) {
-          expect(res.status).to.be(403);
-          done();
-        });
-      });
-      it('Unauthorized user should get list of all parts', async function (done) {
+      it('Non loggedIn user should receive error when try to list all orders', async function (done) {
         const userToken = '';
 
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.partAllGet(function (error, data, res) {
-          expect(res.status).to.be(200);
+        instance.orderUserGet(function (error, data, res) {
+          expect(res.status).to.be(401);
           done();
-        })
+        });
       });
     });
   });
