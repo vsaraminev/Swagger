@@ -13,12 +13,7 @@
  *
  */
 
-
 (function (root, factory) {
-
-  const jwt = require('jsonwebtoken');
-  const encryption = require('../../util/encryption');
-
   if (typeof define === 'function' && define.amd) {
     // AMD.
     define(['expect.js', '../../src/index'], factory);
@@ -31,13 +26,14 @@
   }
 }(this, function (expect, SwaggerTunningPlace) {
   'use strict';
-  const authUtil = require('../common/authentication_utils');
-  let constants = require('../../../util/constants');
 
+  const authUtil = require('../common/authentication_utils');
+  let constants = require('../common/constants');
+  let partId;
   var instance;
 
   beforeEach(function () {
-    instance = new SwaggerTunningPlace.ProjectApi();
+    instance = new SwaggerTunningPlace.PartApi();
     instance.apiClient.basePath = constants.basePath;
   });
 
@@ -57,45 +53,44 @@
       object[property] = value;
   }
 
-  describe('ProjectApi', function () {
+  describe('PartApi', function () {
     describe('End to End', function () {
-      it('Non admin user add project and get details successfully', async function (done) {
-        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
-
-        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
-
-        instance.addProject(constants.project, function (error, data, res) {
-          if (error) throw error;
-          let projectId = res.body.project._id;
-          instance.projectDetailsIdGet(projectId, function (error, data, res) {
-            if (error) throw error;
-            expect(res.status).to.be(200);
-            done();
-          })
-        });
-      });
-      it('Admin user should be able to CRUD project', async function (done) {
+      it('Admin user should be able to CRUD part', async function (done) {
         const userToken = await authUtil.loginUserObj(constants.adminUser);
-
-        let projectId;
         await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
 
-        instance.addProject(constants.adminProject, function (error, data, res) {
+        instance.addPart(constants.part, function (error, data, res) {
           if (error) throw error;
-          projectId = res.body.project._id;
-          instance.projectDetailsIdGet(projectId, function (error, data, res) {
-            if (error) throw error;
-            projectId = res.body.id;
-
-            instance.projectEditIdPut(projectId, constants.newAdminProject, function (error, data, res) {
-              projectId = res.body.id;
-              instance.projectDeleteIdDelete(projectId, function (error, data, res) {
+          partId = res.body.part._id;
+          instance.partDetailsIdGet(partId, function (error, data, res) {
+            partId = res.body.id;
+            instance.partEditIdPut(partId, constants.newPart, function (error, data, res) {
+              partId = res.body.id;
+              instance.partDeleteIdDelete(partId, function (error, data, res) {
                 expect(res.status).to.be(200);
                 done();
               })
             })
           })
         });
+      });
+      it('Non admin user should receive error when try to create a part', async function (done) {
+        const userToken = await authUtil.loginUserObj(constants.nonAdminUser);
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+        instance.addPart(constants.part, function (error, data, res) {
+          expect(res.status).to.be(403);
+          done();
+        });
+      });
+      it('Unauthorized user should get list of all parts', async function (done) {
+        const userToken = '';
+
+        await authUtil.setUserToken(instance, userToken, constants.apiAuthenticationName);
+
+        instance.partAllGet(function (error, data, res) {
+          expect(res.status).to.be(200);
+          done();
+        })
       });
     });
   });

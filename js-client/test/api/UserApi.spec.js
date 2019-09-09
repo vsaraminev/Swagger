@@ -29,7 +29,7 @@
 
   var instance;
   const authUtil = require('../common/authentication_utils');
-  const constants = require('../../../util/constants');
+  const constants = require('../common/constants');
 
   beforeEach(function () {
     instance = new SwaggerTunningPlace.UserApi();

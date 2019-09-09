@@ -4,7 +4,8 @@
   "description": "Cars system",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "mocha": "mocha --opts ./js-client/test/api/OrderApi.spec.js"
   },
   "keywords": [
     "cars",
